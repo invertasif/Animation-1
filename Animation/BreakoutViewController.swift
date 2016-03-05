@@ -18,7 +18,12 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate {
         return lazilyCreatedDynamicAnimator
     }()
     private let breakoutBehavior = BreakoutBehavior()
-            
+    
+    struct BoundaryNames {
+        static let PaddleBoundary = "Paddle Boundary"
+        static let BrickBoundary = "Brick Boundary"
+    }
+    
     // MARK: View controller lifecycle
     
     override func viewDidLoad() {
@@ -59,10 +64,10 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate {
 
             if translation.x > 0 {
                 paddleView?.moveRight()
-                breakoutBehavior.syncPaddle(paddleView!)
+                syncPaddle()
             } else if translation.x < 0 {
                 paddleView?.moveLeft()
-                breakoutBehavior.syncPaddle(paddleView!)
+                syncPaddle()
             }
             
             gesture.setTranslation(CGPointZero, inView: gameView)
@@ -102,8 +107,19 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate {
         if paddleView == nil {
             paddleView = PaddleView(referenceView: gameView)
             gameView.addSubview(paddleView!)            
-            breakoutBehavior.syncPaddle(paddleView!)
-//            breakoutBehavior.addPaddle(paddleView!)
+            syncPaddle()
+        }
+    }
+    
+    private func syncPaddle() {
+        if let paddleView = paddleView {
+            // Why ovalInRect?
+            // Specs, page 5: 26. You might want to make the bezier path boundary
+            // for your paddle be an oval (even if the paddle itself still looks
+            // like a rectangle). It makes the bouncing ball come off the paddle
+            // more interestingly.
+            let paddleBoundary = UIBezierPath(ovalInRect: paddleView.frame)
+            breakoutBehavior.addBoundary(paddleBoundary, named: BoundaryNames.PaddleBoundary)
         }
     }
     

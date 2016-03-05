@@ -12,7 +12,7 @@ class BreakoutBehavior: UIDynamicBehavior {
     lazy var collidor: UICollisionBehavior = {
         let lazilyCreatedCollisionBehavior = UICollisionBehavior()
         
-        lazilyCreatedCollisionBehavior.translatesReferenceBoundsIntoBoundary = true
+//        lazilyCreatedCollisionBehavior.translatesReferenceBoundsIntoBoundary = true
         
         return lazilyCreatedCollisionBehavior
     }()
@@ -26,11 +26,6 @@ class BreakoutBehavior: UIDynamicBehavior {
         return lazilyCreatedBallBehavior
     }()
     
-    struct BoundaryNames {
-        static let PaddleBoundary = "Paddle Boundary"
-        static let BrickBoundary = "Brick Boundary"
-    }
-    
     override init() {
         super.init()
         addChildBehavior(gravity)
@@ -38,10 +33,7 @@ class BreakoutBehavior: UIDynamicBehavior {
         addChildBehavior(ballBehavior)
     }
     
-    func syncPaddle(view: UIView) {        
-        let paddleBoundary = UIBezierPath(ovalInRect: view.frame)
-        addBoundary(paddleBoundary, named: BoundaryNames.PaddleBoundary)
-    }
+    // MARK: - Boundaries
     
     func addBoundary(path: UIBezierPath, named name: String) {
         collidor.removeBoundaryWithIdentifier(name)
@@ -52,10 +44,7 @@ class BreakoutBehavior: UIDynamicBehavior {
         collidor.removeBoundaryWithIdentifier(name)
     }
     
-    func addPaddle(paddle: UIView) {
-        dynamicAnimator?.referenceView?.addSubview(paddle)
-        collidor.addItem(paddle)
-    }
+    // MARK: - Ball
     
     func addBall(ball: UIView) {
         dynamicAnimator?.referenceView?.addSubview(ball)
