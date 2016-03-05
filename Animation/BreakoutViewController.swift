@@ -18,7 +18,7 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate {
         return lazilyCreatedDynamicAnimator
     }()
     private let breakoutBehavior = BreakoutBehavior()
-        
+            
     // MARK: View controller lifecycle
     
     override func viewDidLoad() {
@@ -33,7 +33,7 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         createPaddle()
-//        createBall()
+        createBall()
 //        createBricks()
     }
     
@@ -59,8 +59,10 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate {
 
             if translation.x > 0 {
                 paddleView?.moveRight()
+                breakoutBehavior.syncPaddle(paddleView!)
             } else if translation.x < 0 {
                 paddleView?.moveLeft()
+                breakoutBehavior.syncPaddle(paddleView!)
             }
             
             gesture.setTranslation(CGPointZero, inView: gameView)
@@ -99,8 +101,9 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate {
     private func createPaddle() {        
         if paddleView == nil {
             paddleView = PaddleView(referenceView: gameView)
-//            gameView.addSubview(paddleView!)
-            breakoutBehavior.addPaddle(paddleView!)
+            gameView.addSubview(paddleView!)            
+            breakoutBehavior.syncPaddle(paddleView!)
+//            breakoutBehavior.addPaddle(paddleView!)
         }
     }
     
@@ -113,7 +116,6 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate {
     private func createBall() {
         var frame = CGRect(origin: CGPointZero, size: ballSize)
         frame.origin.x = ((paddleView?.frame.origin.x)! - ballSize.width / 2) + ((paddleView?.frame.size.width)! / 2)
-//        frame.origin.y = (paddleView?.frame.origin.y)! - ballSize.height
         
         if ballView == nil {
             ballView = BallView(frame: frame)

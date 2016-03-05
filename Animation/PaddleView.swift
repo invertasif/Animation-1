@@ -9,7 +9,7 @@
 import Foundation
 
 class PaddleView: UIView {
-    private let minAcceptableSpeed = 10
+    private let minAcceptableSpeed = 5
     private let maxAcceptableSpeed = 200
     private let minAcceptableWidth = 20
     private let maxAcceptableWidth = 200
@@ -48,7 +48,12 @@ class PaddleView: UIView {
         print("current speed: \(currentSpeed)")
         
         frame = CGRect(origin: CGPointZero, size: CGSize(width: Double(currentWidth), height: Double(height)))
-        frame.origin.x = getOriginXFromCenterX(referenceView.bounds.size.width/2)  // 2.0 = center position of device width
+        
+        // divide referenceView width by 2 to get the center position
+        // that's where the paddle should be approximately centered
+        // the paddle width is a factor of referenceView width so the exact
+        // position is derived by getOriginXFromCenterX
+        frame.origin.x = getOriginXFromCenterX(referenceView.bounds.size.width/2)
         frame.origin.y = referenceView.bounds.size.height - CGFloat(height)
         
         backgroundColor = color
@@ -140,6 +145,10 @@ class PaddleView: UIView {
         // floor produces best results for paddle speed after testing on various devices
         let approxMidIndex = Int(floor(Double(availableSpeed.count-1)/2))
         currentSpeed = availableSpeed[approxMidIndex]
+        
+//        currentSpeed = availableSpeed[0]
+//        currentSpeed = 8
+        
     }
     
     private func initAvailableWidth() {
