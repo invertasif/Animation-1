@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2087EA0B1C87796400581C6D /* PaddleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2087EA0A1C87796400581C6D /* PaddleView.swift */; };
 		20CDBF581C609510003DC102 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20CDBF571C609510003DC102 /* AppDelegate.swift */; };
 		20CDBF5D1C609510003DC102 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 20CDBF5B1C609510003DC102 /* Main.storyboard */; };
 		20CDBF5F1C609510003DC102 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 20CDBF5E1C609510003DC102 /* Assets.xcassets */; };
@@ -17,6 +18,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2087EA0A1C87796400581C6D /* PaddleView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PaddleView.swift; sourceTree = "<group>"; };
 		20B3857A1C84BE27005B44C9 /* UIDynamicAnimatorBridgingHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UIDynamicAnimatorBridgingHeader.h; sourceTree = "<group>"; };
 		20CDBF541C609510003DC102 /* Animation.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Animation.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		20CDBF571C609510003DC102 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -63,6 +65,7 @@
 				20CDBF691C60952A003DC102 /* BreakoutViewController.swift */,
 				20F2914A1C7417CF009882E9 /* BreakoutBehavior.swift */,
 				20F2914C1C742404009882E9 /* BallView.swift */,
+				2087EA0A1C87796400581C6D /* PaddleView.swift */,
 				20CDBF5B1C609510003DC102 /* Main.storyboard */,
 				20B3857A1C84BE27005B44C9 /* UIDynamicAnimatorBridgingHeader.h */,
 				20CDBF5E1C609510003DC102 /* Assets.xcassets */,
@@ -145,6 +148,7 @@
 			files = (
 				20F2914B1C7417CF009882E9 /* BreakoutBehavior.swift in Sources */,
 				20CDBF581C609510003DC102 /* AppDelegate.swift in Sources */,
+				2087EA0B1C87796400581C6D /* PaddleView.swift in Sources */,
 				20CDBF6A1C60952A003DC102 /* BreakoutViewController.swift in Sources */,
 				20F2914D1C742404009882E9 /* BallView.swift in Sources */,
 			);
