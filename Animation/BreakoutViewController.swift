@@ -8,7 +8,7 @@
 
 import UIKit
 
-class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate {
+class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICollisionBehaviorDelegate {
     private lazy var animator: UIDynamicAnimator = {
         let lazilyCreatedDynamicAnimator = UIDynamicAnimator(referenceView: self.gameView)
         lazilyCreatedDynamicAnimator.delegate = self
@@ -22,8 +22,10 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate {
         static let GameViewTopBoundary = "Game View Top Boundary"
         static let GameViewRightBoundary = "Game View Right Boundary"
         static let PaddleBoundary = "Paddle Boundary"
-        static let BrickBoundary = "Brick Boundary"
+        static let BrickBoundary = "Brick Boundary at row:%@, col: %@"
     }
+    
+    var bricks = [String:UIView]();
     
     // MARK: View controller lifecycle
     
@@ -33,14 +35,14 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate {
     }
     
     override func viewDidAppear(animated: Bool) {
-        
+        breakoutBehavior.collidor.collisionDelegate = self
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()        
         createPaddle()
         createBall()
-//        createBricks()
+        createBricks()
         addGameViewBoundary()
     }
     
@@ -108,10 +110,20 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate {
     // MARK: - Bricks
     
     private let brickHeight = 20
-    private let bricksPerRow = 12
+    private let bricksPerRow = 8
     private let brickBackgroundColor = UIColor.blueColor()
-    private let brickRows = 10
+    private let brickRows = 5
     private let topBrickDistanceFromTop = 100
+    
+    func collisionBehavior(behavior: UICollisionBehavior, beganContactForItem item: UIDynamicItem, withBoundaryIdentifier identifier: NSCopying?, atPoint p: CGPoint) {
+        print("collision detected")
+        if let identifier = identifier as? String {
+            if let brick = bricks[identifier] {
+                breakoutBehavior.removeBoundary(named: identifier)
+                brick.removeFromSuperview()
+            }
+        }
+    }
     
     private func createBricks() {
         let brickWidth = gameView.bounds.size.width / CGFloat(bricksPerRow)
@@ -124,7 +136,12 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate {
                 brick.backgroundColor = brickBackgroundColor
                 brick.layer.borderColor = UIColor.whiteColor().CGColor
                 brick.layer.borderWidth = 0.5
+                
                 gameView.addSubview(brick)
+                let brickPath = UIBezierPath(rect: brick.frame)
+                let brickIdentifier = BoundaryNames.BrickBoundary + "\(row).\(column)"
+                breakoutBehavior.addBoundary(brickPath, named: brickIdentifier)
+                bricks[brickIdentifier] = brick
             }
         }
     }

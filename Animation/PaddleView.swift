@@ -13,6 +13,7 @@ class PaddleView: UIView {
     private let maxAcceptableSpeed = 200
     private let minAcceptableWidth = 20
     private let maxAcceptableWidth = 200
+    private let height: Int = 10
     
     // width and speed vars are set as implicity unwrapped optionals
     // these depend on referenceView and we are guaranteeing that they
@@ -23,9 +24,7 @@ class PaddleView: UIView {
     private var currentWidth: Int!
     private var availableWidth: [Int]!
     
-    private let height: Int = 20
-    private let color = UIColor.greenColor()
-    
+    private let color = UIColor.greenColor()    
     private var referenceView: UIView!
     
     init(referenceView: UIView) {

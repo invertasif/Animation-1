@@ -12,6 +12,7 @@ class BreakoutBehavior: UIDynamicBehavior {
     lazy var collidor: UICollisionBehavior = {
         let lazilyCreatedCollisionBehavior = UICollisionBehavior()
 //        lazilyCreatedCollisionBehavior.translatesReferenceBoundsIntoBoundary = true
+//        lazilyCreatedCollisionBehavior.collisionDelegate = self
         return lazilyCreatedCollisionBehavior
     }()
     
@@ -34,6 +35,8 @@ class BreakoutBehavior: UIDynamicBehavior {
         addChildBehavior(collidor)
         addChildBehavior(ballBehavior)
     }
+    
+
     
     // MARK: - Boundaries
     
