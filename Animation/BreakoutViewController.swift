@@ -22,20 +22,35 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
         static let GameViewTopBoundary = "Game View Top Boundary"
         static let GameViewRightBoundary = "Game View Right Boundary"
         static let PaddleBoundary = "Paddle Boundary"
-        static let BrickBoundary = "Brick Boundary at row:%@, col: %@"
+        static let BrickBoundary = "Brick Boundary"
     }
     
+    // used for identifying colliding bricks and removing from superview
     var bricks = [String:UIView]();
     
     // MARK: View controller lifecycle
     
+    func dynamicAnimatorDidPause(animator: UIDynamicAnimator) {
+        print("dynamicAnimatorDidPause")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         animator.addBehavior(breakoutBehavior)
+        breakoutBehavior.collidor.collisionDelegate = self
+        breakoutBehavior.collidor.action = { 
+            if let ballView = self.ballView {
+                if !CGRectIntersectsRect(ballView.frame, self.gameView.frame) {
+                    print("will remove ball view")
+                    self.breakoutBehavior.removeBall(ballView)
+                    self.ballView = nil
+                }
+            }
+        }
     }
     
     override func viewDidAppear(animated: Bool) {
-        breakoutBehavior.collidor.collisionDelegate = self
+        
     }
     
     override func viewDidLayoutSubviews() {
@@ -71,7 +86,7 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
                 // top of a bouncing ball or the ball might get trapped inside your paddle.
                 if CGRectIntersectsRect(paddleView.frame, ballView.frame) {
                     print("ball collided")
-                    breakoutBehavior.ballBehavior.action = {
+                    breakoutBehavior.ballBehavior.action = { [unowned self] in
                         if !CGRectIntersectsRect(paddleView.frame, ballView.frame) {
                             self.syncPaddle()
                         }
@@ -116,7 +131,6 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
     private let topBrickDistanceFromTop = 100
     
     func collisionBehavior(behavior: UICollisionBehavior, beganContactForItem item: UIDynamicItem, withBoundaryIdentifier identifier: NSCopying?, atPoint p: CGPoint) {
-        print("collision detected")
         if let identifier = identifier as? String {
             if let brick = bricks[identifier] {
                 breakoutBehavior.removeBoundary(named: identifier)

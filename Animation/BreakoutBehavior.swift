@@ -12,20 +12,20 @@ class BreakoutBehavior: UIDynamicBehavior {
     lazy var collidor: UICollisionBehavior = {
         let lazilyCreatedCollisionBehavior = UICollisionBehavior()
 //        lazilyCreatedCollisionBehavior.translatesReferenceBoundsIntoBoundary = true
-//        lazilyCreatedCollisionBehavior.collisionDelegate = self
         return lazilyCreatedCollisionBehavior
     }()
     
     lazy var gravity: UIGravityBehavior = {
         let lazilyCreatedGravityBehavior = UIGravityBehavior()
-        lazilyCreatedGravityBehavior.magnitude = 0.3
+        lazilyCreatedGravityBehavior.magnitude = 0.1
         return lazilyCreatedGravityBehavior
     }()
     
     lazy var ballBehavior: UIDynamicItemBehavior = {
         let lazilyCreatedBallBehavior = UIDynamicItemBehavior()
-        lazilyCreatedBallBehavior.elasticity = 1.0
+        lazilyCreatedBallBehavior.elasticity = 0.5
         lazilyCreatedBallBehavior.resistance = 0
+        lazilyCreatedBallBehavior.friction = 0
         return lazilyCreatedBallBehavior
     }()
     
@@ -35,8 +35,6 @@ class BreakoutBehavior: UIDynamicBehavior {
         addChildBehavior(collidor)
         addChildBehavior(ballBehavior)
     }
-    
-
     
     // MARK: - Boundaries
     
@@ -52,17 +50,21 @@ class BreakoutBehavior: UIDynamicBehavior {
     // MARK: - Ball
     
     func pushBall(ball: UIView) {
-        let pushBehavior = UIPushBehavior(items: [ball], mode: UIPushBehaviorMode.Instantaneous)        
+        let pushBehavior = UIPushBehavior(items: [ball], mode: UIPushBehaviorMode.Instantaneous)
         
         let angularVelocity = ballBehavior.angularVelocityForItem(ball)
         print("angularVelocity: \(angularVelocity)")
 
+        // angularVelocity zero means ball at resting state on paddle
         if angularVelocity == 0 {
-            pushBehavior.magnitude = 0.2
+            pushBehavior.magnitude = 0.1
+            let lower =  CGFloat(((90-15) * M_PI)/180)
+            let upper = CGFloat(((90+15) * M_PI)/180)
+            pushBehavior.angle = CGFloat.randomRadian(lower, upper)
         } else {
             pushBehavior.magnitude = 0.1
+            pushBehavior.angle = CGFloat.randomRadian()
         }
-        pushBehavior.angle = CGFloat.randomRadian()
         
         print("pushBehavior.angle \(pushBehavior.angle)")
                 
@@ -70,6 +72,7 @@ class BreakoutBehavior: UIDynamicBehavior {
         // since we don't need it anymore; however since the action captures a pointer back 
         // to itself (pushBehavior), should avoid memory cycle with [unowned pushBehavior]
         pushBehavior.action = { [unowned pushBehavior] in
+            pushBehavior.removeItem(ball)
             pushBehavior.dynamicAnimator?.removeBehavior(pushBehavior)
         }
         addChildBehavior(pushBehavior)
@@ -87,11 +90,13 @@ class BreakoutBehavior: UIDynamicBehavior {
         collidor.removeItem(ball)
         ballBehavior.removeItem(ball)
         ball.removeFromSuperview()
+        
+        print("did remove ball")
     }
 }
 
 private extension CGFloat {
-    static func randomRadian() -> CGFloat {
-        return CGFloat(arc4random() % UInt32(2 * M_PI * 1000) / 1000)
+    static func randomRadian(lower: CGFloat = 0, _ upper: CGFloat = CGFloat(2 * M_PI)) -> CGFloat {
+        return CGFloat(Float(arc4random()) / Float(UINT32_MAX)) * (upper - lower) + lower
     }
 }
