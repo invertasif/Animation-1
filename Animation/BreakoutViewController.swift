@@ -18,7 +18,9 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate {
     private let breakoutBehavior = BreakoutBehavior()
     
     struct BoundaryNames {
-        static let GameViewBoundary = "Game View Boundary"
+        static let GameViewLeftBoundary = "Game View Left Boundary"
+        static let GameViewTopBoundary = "Game View Top Boundary"
+        static let GameViewRightBoundary = "Game View Right Boundary"
         static let PaddleBoundary = "Paddle Boundary"
         static let BrickBoundary = "Brick Boundary"
     }
@@ -38,23 +40,16 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate {
         super.viewDidLayoutSubviews()        
         createPaddle()
         createBall()
-//        createBricks()
-        
+//        createBricks()        
         addGameViewBoundary()
     }
     
     // MARK: - Gestures
     
     @IBAction func tap(gesture: UITapGestureRecognizer) {
-//        let location = gesture.locationInView(gameView)
-//        print(location)
-        
-//        paddleView?.increaseSpeed()
-//        paddleView?.decreaseSpeed()
-        
-//        paddleView?.increaseWidth()
-//        paddleView?.decreaseWidth()
-        
+        if let ballView = ballView {
+            breakoutBehavior.pushBall(ballView)
+        }
     }
     
     @IBAction func movePaddle(gesture: UIPanGestureRecognizer) {
@@ -92,9 +87,9 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate {
         gameViewPathRight.moveToPoint(CGPoint(x: gameView.bounds.size.width, y: gameView.bounds.origin.y))
         gameViewPathRight.addLineToPoint(CGPoint(x: gameView.bounds.size.width, y: gameView.bounds.size.height))
                 
-        breakoutBehavior.addBoundary(gameViewPathLeft, named: "left")
-        breakoutBehavior.addBoundary(gameViewPathTop, named: "top")
-        breakoutBehavior.addBoundary(gameViewPathRight, named: "right")
+        breakoutBehavior.addBoundary(gameViewPathLeft, named: BoundaryNames.GameViewLeftBoundary)
+        breakoutBehavior.addBoundary(gameViewPathTop, named: BoundaryNames.GameViewTopBoundary)
+        breakoutBehavior.addBoundary(gameViewPathRight, named: BoundaryNames.GameViewRightBoundary)
     }
     
     // MARK: - Bricks

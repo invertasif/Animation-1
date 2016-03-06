@@ -47,6 +47,25 @@ class BreakoutBehavior: UIDynamicBehavior {
     
     // MARK: - Ball
     
+    func pushBall(ball: UIView) {
+        let pushBehavior = UIPushBehavior(items: [ball], mode: UIPushBehaviorMode.Instantaneous)
+        pushBehavior.magnitude = 0.1
+        
+        if ballBehavior.angularVelocityForItem(ball) > 0 {
+            pushBehavior.angle = -CGFloat.randomRadian()
+        } else {
+            pushBehavior.angle = CGFloat.randomRadian()
+        }
+                
+        // when push behavior is done acting on its item [ball], remove it from its animator
+        // since we don't need it anymore; however since the action captures a pointer back 
+        // to itself (pushBehavior), should avoid memory cycle with [unowned pushBehavior]
+        pushBehavior.action = { [unowned pushBehavior] in
+            pushBehavior.dynamicAnimator?.removeBehavior(pushBehavior)
+        }
+        addChildBehavior(pushBehavior)
+    }
+    
     func addBall(ball: UIView) {
         dynamicAnimator?.referenceView?.addSubview(ball)
         gravity.addItem(ball)
@@ -59,5 +78,11 @@ class BreakoutBehavior: UIDynamicBehavior {
         collidor.removeItem(ball)
         ballBehavior.removeItem(ball)
         ball.removeFromSuperview()
+    }
+}
+
+private extension CGFloat {
+    static func randomRadian() -> CGFloat {
+        return CGFloat(arc4random() % UInt32(2 * M_PI * 1000))
     }
 }
