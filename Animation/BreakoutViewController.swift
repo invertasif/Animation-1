@@ -40,7 +40,7 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate {
         super.viewDidLayoutSubviews()        
         createPaddle()
         createBall()
-//        createBricks()        
+//        createBricks()
         addGameViewBoundary()
     }
     
@@ -58,12 +58,25 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate {
         case .Changed:
             let translation = gesture.translationInView(gameView)
 
-            if translation.x > 0 {
-                paddleView?.moveRight()
-                syncPaddle()
-            } else if translation.x < 0 {
-                paddleView?.moveLeft()
-                syncPaddle()
+            if let paddleView = paddleView, ballView = ballView {
+                if translation.x > 0 {
+                    paddleView.moveRight()
+                } else if translation.x < 0 {
+                    paddleView.moveLeft()
+                }
+                
+                // Specs page 5: 23. Be careful not to move your paddle boundary right on 
+                // top of a bouncing ball or the ball might get trapped inside your paddle.
+                if CGRectIntersectsRect(paddleView.frame, ballView.frame) {
+                    print("ball collided")
+                    breakoutBehavior.ballBehavior.action = {
+                        if !CGRectIntersectsRect(paddleView.frame, ballView.frame) {
+                            self.syncPaddle()
+                        }
+                    }
+                } else {
+                    syncPaddle()
+                }
             }
             
             gesture.setTranslation(CGPointZero, inView: gameView)
@@ -149,6 +162,7 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate {
     private func createBall() {
         var frame = CGRect(origin: CGPointZero, size: ballSize)
         frame.origin.x = ((paddleView?.frame.origin.x)! - ballSize.width / 2) + ((paddleView?.frame.size.width)! / 2)
+        frame.origin.y = (paddleView?.frame.origin.y)! - ballSize.height
         
         if ballView == nil {
             ballView = BallView(frame: frame)

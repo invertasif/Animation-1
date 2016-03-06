@@ -11,6 +11,7 @@ import UIKit
 class BreakoutBehavior: UIDynamicBehavior {
     lazy var collidor: UICollisionBehavior = {
         let lazilyCreatedCollisionBehavior = UICollisionBehavior()
+//        lazilyCreatedCollisionBehavior.translatesReferenceBoundsIntoBoundary = true
         return lazilyCreatedCollisionBehavior
     }()
     
@@ -48,14 +49,19 @@ class BreakoutBehavior: UIDynamicBehavior {
     // MARK: - Ball
     
     func pushBall(ball: UIView) {
-        let pushBehavior = UIPushBehavior(items: [ball], mode: UIPushBehaviorMode.Instantaneous)
-        pushBehavior.magnitude = 0.1
+        let pushBehavior = UIPushBehavior(items: [ball], mode: UIPushBehaviorMode.Instantaneous)        
         
-        if ballBehavior.angularVelocityForItem(ball) > 0 {
-            pushBehavior.angle = -CGFloat.randomRadian()
+        let angularVelocity = ballBehavior.angularVelocityForItem(ball)
+        print("angularVelocity: \(angularVelocity)")
+
+        if angularVelocity == 0 {
+            pushBehavior.magnitude = 0.2
         } else {
-            pushBehavior.angle = CGFloat.randomRadian()
+            pushBehavior.magnitude = 0.1
         }
+        pushBehavior.angle = CGFloat.randomRadian()
+        
+        print("pushBehavior.angle \(pushBehavior.angle)")
                 
         // when push behavior is done acting on its item [ball], remove it from its animator
         // since we don't need it anymore; however since the action captures a pointer back 
@@ -83,6 +89,6 @@ class BreakoutBehavior: UIDynamicBehavior {
 
 private extension CGFloat {
     static func randomRadian() -> CGFloat {
-        return CGFloat(arc4random() % UInt32(2 * M_PI * 1000))
+        return CGFloat(arc4random() % UInt32(2 * M_PI * 1000) / 1000)
     }
 }
