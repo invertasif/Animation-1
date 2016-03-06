@@ -9,8 +9,6 @@
 import UIKit
 
 class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate {
-    @IBOutlet weak var gameView: UIView!
-    
     private lazy var animator: UIDynamicAnimator = {
         let lazilyCreatedDynamicAnimator = UIDynamicAnimator(referenceView: self.gameView)
         lazilyCreatedDynamicAnimator.delegate = self
@@ -20,6 +18,7 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate {
     private let breakoutBehavior = BreakoutBehavior()
     
     struct BoundaryNames {
+        static let GameViewBoundary = "Game View Boundary"
         static let PaddleBoundary = "Paddle Boundary"
         static let BrickBoundary = "Brick Boundary"
     }
@@ -36,10 +35,12 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate {
     }
     
     override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
+        super.viewDidLayoutSubviews()        
         createPaddle()
         createBall()
 //        createBricks()
+        
+        addGameViewBoundary()
     }
     
     // MARK: - Gestures
@@ -73,7 +74,28 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate {
             gesture.setTranslation(CGPointZero, inView: gameView)
         default: break
         }
-    }    
+    }
+    
+    // MARK: - Game view
+    @IBOutlet weak var gameView: UIView!
+    
+    private func addGameViewBoundary() {
+        let gameViewPathLeft = UIBezierPath()
+        gameViewPathLeft.moveToPoint(CGPoint(x: gameView.bounds.origin.x, y: gameView.bounds.size.height))
+        gameViewPathLeft.addLineToPoint(CGPoint(x: gameView.bounds.origin.x, y: gameView.bounds.origin.y))
+        
+        let gameViewPathTop = UIBezierPath()
+        gameViewPathTop.moveToPoint(CGPoint(x: gameView.bounds.origin.x, y: gameView.bounds.origin.y))
+        gameViewPathTop.addLineToPoint(CGPoint(x: gameView.bounds.size.width, y: gameView.bounds.origin.y))
+        
+        let gameViewPathRight = UIBezierPath()
+        gameViewPathRight.moveToPoint(CGPoint(x: gameView.bounds.size.width, y: gameView.bounds.origin.y))
+        gameViewPathRight.addLineToPoint(CGPoint(x: gameView.bounds.size.width, y: gameView.bounds.size.height))
+                
+        breakoutBehavior.addBoundary(gameViewPathLeft, named: "left")
+        breakoutBehavior.addBoundary(gameViewPathTop, named: "top")
+        breakoutBehavior.addBoundary(gameViewPathRight, named: "right")
+    }
     
     // MARK: - Bricks
     

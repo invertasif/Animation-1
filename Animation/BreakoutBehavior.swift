@@ -11,13 +11,14 @@ import UIKit
 class BreakoutBehavior: UIDynamicBehavior {
     lazy var collidor: UICollisionBehavior = {
         let lazilyCreatedCollisionBehavior = UICollisionBehavior()
-        
-//        lazilyCreatedCollisionBehavior.translatesReferenceBoundsIntoBoundary = true
-        
         return lazilyCreatedCollisionBehavior
     }()
     
-    let gravity = UIGravityBehavior()
+    lazy var gravity: UIGravityBehavior = {
+        let lazilyCreatedGravityBehavior = UIGravityBehavior()
+        lazilyCreatedGravityBehavior.magnitude = 0.3
+        return lazilyCreatedGravityBehavior
+    }()
     
     lazy var ballBehavior: UIDynamicItemBehavior = {
         let lazilyCreatedBallBehavior = UIDynamicItemBehavior()
