@@ -146,7 +146,7 @@ class PaddleView: UIView {
         currentSpeed = availableSpeed[approxMidIndex]
         
 //        currentSpeed = availableSpeed[0]
-//        currentSpeed = 8
+        currentSpeed = 12
         
     }
     

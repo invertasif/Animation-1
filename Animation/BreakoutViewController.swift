@@ -15,6 +15,11 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
         lazilyCreatedDynamicAnimator.debugEnabled = true
         return lazilyCreatedDynamicAnimator
     }()
+    
+    func dynamicAnimatorDidPause(animator: UIDynamicAnimator) {
+        print("dynamicAnimatorDidPause")
+    }
+    
     private let breakoutBehavior = BreakoutBehavior()
     
     struct BoundaryNames {
@@ -29,10 +34,6 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
     var bricks = [String:UIView]();
     
     // MARK: View controller lifecycle
-    
-    func dynamicAnimatorDidPause(animator: UIDynamicAnimator) {
-        print("dynamicAnimatorDidPause")
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -101,6 +102,9 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
         }
     }
     
+    // MARK: - Start / Restart game
+    
+    
     // MARK: - Game view
     @IBOutlet weak var gameView: UIView!
     
@@ -134,7 +138,30 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
         if let identifier = identifier as? String {
             if let brick = bricks[identifier] {
                 breakoutBehavior.removeBoundary(named: identifier)
-                brick.removeFromSuperview()
+                UIView.animateWithDuration(0.2,
+                    animations: {
+                        brick.alpha = 0
+                    },
+                    completion: { didComplete in
+                        brick.alpha = 1
+                        UIView.animateWithDuration(0.2,
+                            animations: {
+                                brick.alpha = 0
+                            },
+                            completion: { didComplete in
+                                brick.alpha = 1
+                                UIView.animateWithDuration(0.8,
+                                    animations: {
+                                        brick.alpha = 0
+                                    },
+                                    completion: { didComplete in
+                                        brick.removeFromSuperview()
+                                    }
+                                )
+                            }
+                        )
+                    }
+                )
             }
         }
     }

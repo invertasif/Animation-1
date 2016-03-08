@@ -11,7 +11,7 @@ import UIKit
 class BreakoutBehavior: UIDynamicBehavior {
     lazy var collidor: UICollisionBehavior = {
         let lazilyCreatedCollisionBehavior = UICollisionBehavior()
-//        lazilyCreatedCollisionBehavior.translatesReferenceBoundsIntoBoundary = true
+        lazilyCreatedCollisionBehavior.translatesReferenceBoundsIntoBoundary = true
         return lazilyCreatedCollisionBehavior
     }()
     
@@ -23,7 +23,7 @@ class BreakoutBehavior: UIDynamicBehavior {
     
     lazy var ballBehavior: UIDynamicItemBehavior = {
         let lazilyCreatedBallBehavior = UIDynamicItemBehavior()
-        lazilyCreatedBallBehavior.elasticity = 0.5
+        lazilyCreatedBallBehavior.elasticity = 1.0
         lazilyCreatedBallBehavior.resistance = 0
         lazilyCreatedBallBehavior.friction = 0
         return lazilyCreatedBallBehavior
@@ -51,23 +51,27 @@ class BreakoutBehavior: UIDynamicBehavior {
     
     func pushBall(ball: UIView) {
         let pushBehavior = UIPushBehavior(items: [ball], mode: UIPushBehaviorMode.Instantaneous)
+        let linearVelocity = ballBehavior.linearVelocityForItem(ball)
         
-        let angularVelocity = ballBehavior.angularVelocityForItem(ball)
-        print("angularVelocity: \(angularVelocity)")
-
-        // angularVelocity zero means ball at resting state on paddle
-        if angularVelocity == 0 {
+        // linearVelocity zero means ball at resting state on paddle
+        if linearVelocity == CGPointZero {
             pushBehavior.magnitude = 0.1
             let lower =  CGFloat(((90-15) * M_PI)/180)
             let upper = CGFloat(((90+15) * M_PI)/180)
             pushBehavior.angle = CGFloat.randomRadian(lower, upper)
         } else {
-            pushBehavior.magnitude = 0.1
-            pushBehavior.angle = CGFloat.randomRadian()
+            pushBehavior.magnitude = 0.2
+            
+            // derive the opposite angle from current velocity
+            let currentAngle = Double(atan2(linearVelocity.y, linearVelocity.x));
+            let oppositeAngle = CGFloat((currentAngle + M_PI) % (2 * M_PI))
+            
+            // add 10 degrees variation for random
+            let lower = oppositeAngle - CGFloat.degreeToRadian(10)
+            let upper = oppositeAngle + CGFloat.degreeToRadian(10)
+            pushBehavior.angle = CGFloat.randomRadian(lower, upper)
         }
         
-        print("pushBehavior.angle \(pushBehavior.angle)")
-                
         // when push behavior is done acting on its item [ball], remove it from its animator
         // since we don't need it anymore; however since the action captures a pointer back 
         // to itself (pushBehavior), should avoid memory cycle with [unowned pushBehavior]
@@ -75,7 +79,7 @@ class BreakoutBehavior: UIDynamicBehavior {
             pushBehavior.removeItem(ball)
             pushBehavior.dynamicAnimator?.removeBehavior(pushBehavior)
         }
-        addChildBehavior(pushBehavior)
+        addChildBehavior(pushBehavior)        
     }
     
     func addBall(ball: UIView) {
@@ -98,5 +102,9 @@ class BreakoutBehavior: UIDynamicBehavior {
 private extension CGFloat {
     static func randomRadian(lower: CGFloat = 0, _ upper: CGFloat = CGFloat(2 * M_PI)) -> CGFloat {
         return CGFloat(Float(arc4random()) / Float(UINT32_MAX)) * (upper - lower) + lower
+    }
+    
+    static func degreeToRadian(degree: Double) -> CGFloat {
+        return CGFloat((degree * M_PI)/180)
     }
 }
