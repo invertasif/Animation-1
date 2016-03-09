@@ -84,12 +84,14 @@ class Paddle: UIImageView {
     }
     
     func decreaseSpeed() {
+        print("decrease paddle speed")
         if let currentIndex = availableSpeed.indexOf(currentSpeed) where currentIndex - 1 >= 0 {
             currentSpeed = availableSpeed[currentIndex-1]
         }
     }
     
     func increaseSpeed() {
+        print("increase paddle speed")
         if let currentIndex = availableSpeed.indexOf(currentSpeed) where currentIndex + 1 <= availableSpeed.count - 1 {
             currentSpeed = availableSpeed[currentIndex+1]
         }
@@ -139,10 +141,10 @@ class Paddle: UIImageView {
     func setDefaultSpeed() {
         // picking an approx mid value from availableSpeeed
         // floor produces best results for paddle speed after testing on various devices
-        let approxMidIndex = Int(floor(Double(availableSpeed.count-1)/2))
-        currentSpeed = availableSpeed[approxMidIndex]
+//        let approxMidIndex = Int(floor(Double(availableSpeed.count-1)/2))
+//        currentSpeed = availableSpeed[approxMidIndex]
         
-//        currentSpeed = availableSpeed[0]
+        currentSpeed = availableSpeed[0]
         
     }
     

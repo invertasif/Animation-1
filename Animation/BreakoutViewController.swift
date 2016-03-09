@@ -35,7 +35,7 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
     }
     
     // used for identifying colliding bricks and removing from superview
-    var bricks = [String:UIView]()
+    var bricks = [String:Brick]()
     
     // MARK: View controller lifecycle
     
@@ -126,8 +126,22 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
     func collisionBehavior(behavior: UICollisionBehavior, beganContactForItem item: UIDynamicItem, withBoundaryIdentifier identifier: NSCopying?, atPoint p: CGPoint) {
         
         if let identifier = identifier as? String {
-            if let brick = bricks[identifier] {
-                removeBrickWithAnimation(identifier, brick: brick)
+            if let brick = bricks[identifier], brickType = brick.type {
+                brick.currentHits++
+                if brick.currentHits >= brickType.hitsRequired {
+                    bricks.removeValueForKey(identifier)
+                    breakoutBehavior.removeBoundary(named: identifier)
+                    brick.animateRemoveFromSuperview()
+                    
+                    // run any special function the brick is identified with
+                    switch brickType {
+                    case .SmallerPaddle:
+                        paddle?.decreaseWidth()
+                    case .LargerPaddle:
+                        paddle?.increaseWidth()
+                    default:break
+                    }
+                }
             }
         }
     }
@@ -137,40 +151,29 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
             breakoutBehavior.removeBoundary(named: identifier)
             brick.removeFromSuperview()
         }
-        bricks = [String:UIView]()
-    }
-    
-    private func removeBrickWithAnimation(identifier: String, brick: UIView) {
-        bricks.removeValueForKey(identifier)
-        breakoutBehavior.removeBoundary(named: identifier)
-        UIView.animateWithDuration(0.2,
-            animations: {
-                brick.alpha = 0
-            },
-            completion: { didComplete in
-                brick.alpha = 1
-                UIView.animateWithDuration(0.2,
-                    animations: {
-                        brick.alpha = 0
-                    },
-                    completion: { didComplete in
-                        brick.alpha = 1
-                        UIView.animateWithDuration(0.8,
-                            animations: {
-                                brick.alpha = 0
-                            },
-                            completion: { didComplete in
-                                brick.removeFromSuperview()
-                            }
-                        )
-                    }
-                )
-            }
-        )
+        bricks = [String:Brick]()
     }
     
     private func createBricks() {
         guard bricks.isEmpty else { return }
+        
+        let maxSpecialBricks = 6
+        var specialBricksMatrix = [(row: Int, col: Int)]()
+        repeat {
+            let randomRow = (brickRows).random()
+            let randomCol = (bricksPerRow).random()
+            let doesContainRandomPosition = specialBricksMatrix.contains({ (position: (row: Int, col: Int)) -> Bool in
+                if position.row == randomRow && position.col == randomCol {
+                    return true
+                } else {
+                    return false
+                }
+            })
+            if doesContainRandomPosition == false {
+                specialBricksMatrix.append((row: randomRow, col: randomCol))
+            }
+        } while specialBricksMatrix.count < maxSpecialBricks
+//        print(specialBricksMatrix)
         
         let brickWidth = gameView.bounds.size.width / CGFloat(bricksPerRow)
         
@@ -178,7 +181,26 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
             for column in 0 ..< bricksPerRow {
                 var frame = CGRect(origin: CGPointZero, size: CGSize(width: brickWidth, height: CGFloat(brickHeight)))
                 frame.origin = CGPoint(x: column * Int(brickWidth), y: (row * brickHeight) + topBrickDistanceFromTop )
-                let brick = Brick(frame: frame)                
+                
+                let doesContainRandomPosition = specialBricksMatrix.contains({ (position: (row: Int, col: Int)) -> Bool in
+                    if position.row == row && position.col == column {
+                        return true
+                    } else {
+                        return false
+                    }
+                })
+                
+                var brick: Brick!
+                if doesContainRandomPosition == true {
+                    let randomSpecialBrickTypeIndex = (BrickType.count - 1).random() + 1
+                    if let brickType = BrickType(rawValue: randomSpecialBrickTypeIndex) {
+                        brick = Brick(frame: frame, type: brickType)
+                    } else {
+                        brick = Brick(frame: frame, type: .Regular)
+                    }
+                } else {
+                    brick = Brick(frame: frame, type: .Regular)
+                }
                 
                 gameView.addSubview(brick)
                 let brickPath = UIBezierPath(rect: brick.frame)
@@ -278,5 +300,11 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
         if let ball = ball {
             breakoutBehavior.pushBall(ball)
         }
+    }
+}
+
+private extension Int {
+    func random() -> Int {
+        return Int(arc4random() % UInt32(self))
     }
 }
