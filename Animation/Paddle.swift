@@ -1,5 +1,5 @@
 //
-//  PaddleView.swift
+//  Paddle.swift
 //  Animation
 //
 //  Created by Sanjib Ahmad on 3/3/16.
@@ -8,12 +8,12 @@
 
 import Foundation
 
-class PaddleView: UIView {
+class Paddle: UIView {
     private let minAcceptableSpeed = 5
     private let maxAcceptableSpeed = 200
     private let minAcceptableWidth = 20
     private let maxAcceptableWidth = 200
-    private let height: Int = 10
+    private let height: Int = 15
     
     // width and speed vars are set as implicity unwrapped optionals
     // these depend on referenceView and we are guaranteeing that they

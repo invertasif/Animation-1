@@ -11,7 +11,6 @@ import UIKit
 class BreakoutBehavior: UIDynamicBehavior {
     lazy var collidor: UICollisionBehavior = {
         let lazilyCreatedCollisionBehavior = UICollisionBehavior()
-        lazilyCreatedCollisionBehavior.translatesReferenceBoundsIntoBoundary = true
         return lazilyCreatedCollisionBehavior
     }()
     
@@ -60,15 +59,15 @@ class BreakoutBehavior: UIDynamicBehavior {
             let upper = CGFloat(((90+15) * M_PI)/180)
             pushBehavior.angle = CGFloat.randomRadian(lower, upper)
         } else {
-            pushBehavior.magnitude = 0.2
+            pushBehavior.magnitude = 0.1
             
             // derive the opposite angle from current velocity
             let currentAngle = Double(atan2(linearVelocity.y, linearVelocity.x));
             let oppositeAngle = CGFloat((currentAngle + M_PI) % (2 * M_PI))
             
-            // add 10 degrees variation for random
-            let lower = oppositeAngle - CGFloat.degreeToRadian(10)
-            let upper = oppositeAngle + CGFloat.degreeToRadian(10)
+            // add 30 degrees variation for random
+            let lower = oppositeAngle - CGFloat.degreeToRadian(30)
+            let upper = oppositeAngle + CGFloat.degreeToRadian(30)
             pushBehavior.angle = CGFloat.randomRadian(lower, upper)
         }
         

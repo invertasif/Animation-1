@@ -1,5 +1,5 @@
 //
-//  BallView.swift
+//  Ball.swift
 //  Animation
 //
 //  Created by Sanjib Ahmad on 2/17/16.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class BallView: UIView {
+class Ball: UIView {
 
     // iOS 9 specific
     override var collisionBoundsType: UIDynamicItemCollisionBoundsType {

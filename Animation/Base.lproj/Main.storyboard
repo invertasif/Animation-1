@@ -26,17 +26,65 @@
                                     <outletCollection property="gestureRecognizers" destination="gcN-ck-xVw" appends="YES" id="0tm-QJ-1K2"/>
                                 </connections>
                             </view>
+                            <view alpha="0.90000000000000002" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="d46-ME-6Oa">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Start Game" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="siK-Sm-bpK">
+                                        <rect key="frame" x="234" y="283" width="132" height="32.5"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="33" id="6vK-V7-mFH"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" style="UICTFontTextStyleTitle1"/>
+                                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                        <nil key="highlightedColor"/>
+                                        <variation key="default">
+                                            <mask key="constraints">
+                                                <exclude reference="6vK-V7-mFH"/>
+                                            </mask>
+                                        </variation>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Breakout" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uQo-24-d7v">
+                                        <rect key="frame" x="275" y="249" width="68.5" height="19.5"/>
+                                        <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                                        <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="breakout" translatesAutoresizingMaskIntoConstraints="NO" id="fiR-qI-2F5">
+                                        <rect key="frame" x="234" y="242" width="33" height="33"/>
+                                    </imageView>
+                                </subviews>
+                                <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                <gestureRecognizers/>
+                                <constraints>
+                                    <constraint firstItem="uQo-24-d7v" firstAttribute="leading" secondItem="fiR-qI-2F5" secondAttribute="trailing" constant="8" symbolic="YES" id="3oM-w4-dd1"/>
+                                    <constraint firstItem="siK-Sm-bpK" firstAttribute="centerY" secondItem="d46-ME-6Oa" secondAttribute="centerY" id="9rI-iO-dCo"/>
+                                    <constraint firstItem="siK-Sm-bpK" firstAttribute="centerX" secondItem="d46-ME-6Oa" secondAttribute="centerX" id="NmJ-RA-reP"/>
+                                    <constraint firstItem="siK-Sm-bpK" firstAttribute="top" secondItem="fiR-qI-2F5" secondAttribute="bottom" constant="8" symbolic="YES" id="Zt6-sI-SKV"/>
+                                    <constraint firstItem="fiR-qI-2F5" firstAttribute="leading" secondItem="siK-Sm-bpK" secondAttribute="leading" id="bPV-G8-pwN"/>
+                                    <constraint firstItem="uQo-24-d7v" firstAttribute="centerY" secondItem="fiR-qI-2F5" secondAttribute="centerY" id="d9R-Ef-K8B"/>
+                                </constraints>
+                                <connections>
+                                    <outletCollection property="gestureRecognizers" destination="tvi-Lb-A6b" appends="YES" id="HHh-fs-0PJ"/>
+                                </connections>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="gns-0q-bmU" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="FJT-rD-AHn"/>
+                            <constraint firstItem="d46-ME-6Oa" firstAttribute="top" secondItem="gns-0q-bmU" secondAttribute="top" id="INV-fH-BdS"/>
                             <constraint firstAttribute="trailing" secondItem="gns-0q-bmU" secondAttribute="trailing" id="KCF-L5-155"/>
+                            <constraint firstItem="d46-ME-6Oa" firstAttribute="leading" secondItem="gns-0q-bmU" secondAttribute="leading" id="Zwg-YT-ycf"/>
                             <constraint firstItem="gns-0q-bmU" firstAttribute="bottom" secondItem="wfy-db-euE" secondAttribute="top" id="a3w-SJ-HBj"/>
+                            <constraint firstItem="d46-ME-6Oa" firstAttribute="bottom" secondItem="wfy-db-euE" secondAttribute="top" id="f1j-oF-dWd"/>
                             <constraint firstItem="gns-0q-bmU" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="oQy-rc-nLN"/>
+                            <constraint firstItem="d46-ME-6Oa" firstAttribute="trailing" secondItem="gns-0q-bmU" secondAttribute="trailing" id="twt-Hg-i3W"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="gameView" destination="gns-0q-bmU" id="C1t-B0-VC1"/>
+                        <outlet property="panGesture" destination="gcN-ck-xVw" id="LDy-yM-5W1"/>
+                        <outlet property="startGameLabel" destination="siK-Sm-bpK" id="yo2-N2-cyA"/>
+                        <outlet property="startView" destination="d46-ME-6Oa" id="lX1-HG-45J"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -50,8 +98,16 @@
                         <action selector="movePaddle:" destination="BYZ-38-t0r" id="Sxv-Er-SYJ"/>
                     </connections>
                 </panGestureRecognizer>
+                <tapGestureRecognizer id="tvi-Lb-A6b">
+                    <connections>
+                        <action selector="startGame:" destination="BYZ-38-t0r" id="ZYZ-B6-BzP"/>
+                    </connections>
+                </tapGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="250" y="387"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="breakout" width="33" height="33"/>
+    </resources>
 </document>

@@ -30,8 +30,12 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
         static let BrickBoundary = "Brick Boundary"
     }
     
+    struct Constants {
+        static let GameOverText = "Game Over"
+    }
+    
     // used for identifying colliding bricks and removing from superview
-    var bricks = [String:UIView]();
+    var bricks = [String:UIView]()
     
     // MARK: View controller lifecycle
     
@@ -40,18 +44,14 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
         animator.addBehavior(breakoutBehavior)
         breakoutBehavior.collidor.collisionDelegate = self
         breakoutBehavior.collidor.action = { 
-            if let ballView = self.ballView {
+            if let ballView = self.ball {
                 if !CGRectIntersectsRect(ballView.frame, self.gameView.frame) {
-                    print("will remove ball view")
                     self.breakoutBehavior.removeBall(ballView)
-                    self.ballView = nil
+                    self.ball = nil
+                    self.gameOver()
                 }
             }
         }
-    }
-    
-    override func viewDidAppear(animated: Bool) {
-        
     }
     
     override func viewDidLayoutSubviews() {
@@ -63,10 +63,11 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
     }
     
     // MARK: - Gestures
+    @IBOutlet var panGesture: UIPanGestureRecognizer!
     
     @IBAction func tap(gesture: UITapGestureRecognizer) {
-        if let ballView = ballView {
-            breakoutBehavior.pushBall(ballView)
+        if let ball = ball {
+            breakoutBehavior.pushBall(ball)
         }
     }
     
@@ -76,19 +77,18 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
         case .Changed:
             let translation = gesture.translationInView(gameView)
 
-            if let paddleView = paddleView, ballView = ballView {
+            if let paddle = paddle, ball = ball {
                 if translation.x > 0 {
-                    paddleView.moveRight()
+                    paddle.moveRight()
                 } else if translation.x < 0 {
-                    paddleView.moveLeft()
+                    paddle.moveLeft()
                 }
                 
                 // Specs page 5: 23. Be careful not to move your paddle boundary right on 
                 // top of a bouncing ball or the ball might get trapped inside your paddle.
-                if CGRectIntersectsRect(paddleView.frame, ballView.frame) {
-                    print("ball collided")
+                if CGRectIntersectsRect(paddle.frame, ball.frame) {
                     breakoutBehavior.ballBehavior.action = { [unowned self] in
-                        if !CGRectIntersectsRect(paddleView.frame, ballView.frame) {
+                        if !CGRectIntersectsRect(paddle.frame, ball.frame) {
                             self.syncPaddle()
                         }
                     }
@@ -103,7 +103,30 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
     }
     
     // MARK: - Start / Restart game
+    @IBOutlet weak var startView: UIView!
+    @IBOutlet weak var startGameLabel: UILabel!
     
+    @IBAction func startGame(sender: UITapGestureRecognizer) {
+        startView.hidden = true
+        
+        gameView.userInteractionEnabled = true
+        panGesture.enabled = true
+    }
+    
+    private func gameOver() {
+        gameView.userInteractionEnabled = false
+        panGesture.enabled = false
+        
+        startView.hidden = false
+        startGameLabel.text = Constants.GameOverText
+        
+        removePaddle()
+        removeAllBricks()
+        
+        createPaddle()
+        createBall()
+        createBricks()
+    }
     
     // MARK: - Game view
     @IBOutlet weak var gameView: UIView!
@@ -137,36 +160,51 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
     func collisionBehavior(behavior: UICollisionBehavior, beganContactForItem item: UIDynamicItem, withBoundaryIdentifier identifier: NSCopying?, atPoint p: CGPoint) {
         if let identifier = identifier as? String {
             if let brick = bricks[identifier] {
-                breakoutBehavior.removeBoundary(named: identifier)
+                removeBrickWithAnimation(identifier, brick: brick)
+            }
+        }
+    }
+    
+    private func removeAllBricks() {
+        for (identifier, brick) in bricks {
+            breakoutBehavior.removeBoundary(named: identifier)
+            brick.removeFromSuperview()
+        }
+        bricks = [String:UIView]()
+    }
+    
+    private func removeBrickWithAnimation(identifier: String, brick: UIView) {
+        bricks.removeValueForKey(identifier)
+        breakoutBehavior.removeBoundary(named: identifier)
+        UIView.animateWithDuration(0.2,
+            animations: {
+                brick.alpha = 0
+            },
+            completion: { didComplete in
+                brick.alpha = 1
                 UIView.animateWithDuration(0.2,
                     animations: {
                         brick.alpha = 0
                     },
                     completion: { didComplete in
                         brick.alpha = 1
-                        UIView.animateWithDuration(0.2,
+                        UIView.animateWithDuration(0.8,
                             animations: {
                                 brick.alpha = 0
                             },
                             completion: { didComplete in
-                                brick.alpha = 1
-                                UIView.animateWithDuration(0.8,
-                                    animations: {
-                                        brick.alpha = 0
-                                    },
-                                    completion: { didComplete in
-                                        brick.removeFromSuperview()
-                                    }
-                                )
+                                brick.removeFromSuperview()
                             }
                         )
                     }
                 )
             }
-        }
+        )
     }
     
     private func createBricks() {
+        guard bricks.isEmpty else { return }
+        
         let brickWidth = gameView.bounds.size.width / CGFloat(bricksPerRow)
         
         for row in 0 ..< brickRows {
@@ -189,18 +227,24 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
     
     // MARK: - Paddle
     
-    private var paddleView: PaddleView?
+    private var paddle: Paddle?
     
     private func createPaddle() {        
-        if paddleView == nil {
-            paddleView = PaddleView(referenceView: gameView)
-            gameView.addSubview(paddleView!)            
+        if paddle == nil {
+            paddle = Paddle(referenceView: gameView)
+            gameView.addSubview(paddle!)
             syncPaddle()
         }
     }
     
+    private func removePaddle() {
+        breakoutBehavior.removeBoundary(named: BoundaryNames.PaddleBoundary)
+        paddle?.removeFromSuperview()
+        paddle = nil
+    }
+    
     private func syncPaddle() {
-        if let paddleView = paddleView {
+        if let paddleView = paddle {
             // Why ovalInRect?
             // Specs, page 5: 26. You might want to make the bezier path boundary
             // for your paddle be an oval (even if the paddle itself still looks
@@ -215,18 +259,18 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
     
     private let ballSize = CGSize(width: 20, height: 20)
     private let ballColor = UIColor.redColor()
-    private var ballView: UIView?
+    private var ball: UIView?
     
     private func createBall() {
         var frame = CGRect(origin: CGPointZero, size: ballSize)
-        frame.origin.x = ((paddleView?.frame.origin.x)! - ballSize.width / 2) + ((paddleView?.frame.size.width)! / 2)
-        frame.origin.y = (paddleView?.frame.origin.y)! - ballSize.height
+        frame.origin.x = ((paddle?.frame.origin.x)! - ballSize.width / 2) + ((paddle?.frame.size.width)! / 2)
+        frame.origin.y = (paddle?.frame.origin.y)! - ballSize.height
         
-        if ballView == nil {
-            ballView = BallView(frame: frame)
-            ballView!.backgroundColor = ballColor
-            ballView!.layer.cornerRadius = (ballView?.bounds.width)!/2
-            breakoutBehavior.addBall(ballView!)
+        if ball == nil {
+            ball = Ball(frame: frame)
+            ball!.backgroundColor = ballColor
+            ball!.layer.cornerRadius = (ball?.bounds.width)!/2
+            breakoutBehavior.addBall(ball!)
         }
     }
 }
