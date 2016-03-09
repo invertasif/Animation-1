@@ -12,7 +12,7 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
     private lazy var animator: UIDynamicAnimator = {
         let lazilyCreatedDynamicAnimator = UIDynamicAnimator(referenceView: self.gameView)
         lazilyCreatedDynamicAnimator.delegate = self
-        lazilyCreatedDynamicAnimator.debugEnabled = true
+//        lazilyCreatedDynamicAnimator.debugEnabled = true
         return lazilyCreatedDynamicAnimator
     }()
     
@@ -44,10 +44,9 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
         animator.addBehavior(breakoutBehavior)
         breakoutBehavior.collidor.collisionDelegate = self
         breakoutBehavior.collidor.action = { 
-            if let ballView = self.ball {
-                if !CGRectIntersectsRect(ballView.frame, self.gameView.frame) {
-                    self.breakoutBehavior.removeBall(ballView)
-                    self.ball = nil
+            if let ball = self.ball {
+                if !CGRectIntersectsRect(ball.frame, self.gameView.frame) {
+                    self.removeBall()
                     self.gameOver()
                 }
             }
@@ -63,44 +62,9 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
     }
     
     // MARK: - Gestures
-    @IBOutlet var panGesture: UIPanGestureRecognizer!
+    @IBOutlet var movePaddleGesture: UIPanGestureRecognizer!
+    @IBOutlet var pushBallGesture: UITapGestureRecognizer!
     
-    @IBAction func tap(gesture: UITapGestureRecognizer) {
-        if let ball = ball {
-            breakoutBehavior.pushBall(ball)
-        }
-    }
-    
-    @IBAction func movePaddle(gesture: UIPanGestureRecognizer) {
-        switch gesture.state {
-        case .Ended: fallthrough
-        case .Changed:
-            let translation = gesture.translationInView(gameView)
-
-            if let paddle = paddle, ball = ball {
-                if translation.x > 0 {
-                    paddle.moveRight()
-                } else if translation.x < 0 {
-                    paddle.moveLeft()
-                }
-                
-                // Specs page 5: 23. Be careful not to move your paddle boundary right on 
-                // top of a bouncing ball or the ball might get trapped inside your paddle.
-                if CGRectIntersectsRect(paddle.frame, ball.frame) {
-                    breakoutBehavior.ballBehavior.action = { [unowned self] in
-                        if !CGRectIntersectsRect(paddle.frame, ball.frame) {
-                            self.syncPaddle()
-                        }
-                    }
-                } else {
-                    syncPaddle()
-                }
-            }
-            
-            gesture.setTranslation(CGPointZero, inView: gameView)
-        default: break
-        }
-    }
     
     // MARK: - Start / Restart game
     @IBOutlet weak var startView: UIView!
@@ -110,12 +74,14 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
         startView.hidden = true
         
         gameView.userInteractionEnabled = true
-        panGesture.enabled = true
+        pushBallGesture.enabled = true
+        movePaddleGesture.enabled = true
     }
     
     private func gameOver() {
         gameView.userInteractionEnabled = false
-        panGesture.enabled = false
+        movePaddleGesture.enabled = false
+        pushBallGesture.enabled = false
         
         startView.hidden = false
         startGameLabel.text = Constants.GameOverText
@@ -151,13 +117,14 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
     
     // MARK: - Bricks
     
-    private let brickHeight = 20
-    private let bricksPerRow = 8
+    private let brickHeight = 30
+    private let bricksPerRow = 6
     private let brickBackgroundColor = UIColor.blueColor()
-    private let brickRows = 5
+    private let brickRows = 4
     private let topBrickDistanceFromTop = 100
     
     func collisionBehavior(behavior: UICollisionBehavior, beganContactForItem item: UIDynamicItem, withBoundaryIdentifier identifier: NSCopying?, atPoint p: CGPoint) {
+        
         if let identifier = identifier as? String {
             if let brick = bricks[identifier] {
                 removeBrickWithAnimation(identifier, brick: brick)
@@ -211,10 +178,7 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
             for column in 0 ..< bricksPerRow {
                 var frame = CGRect(origin: CGPointZero, size: CGSize(width: brickWidth, height: CGFloat(brickHeight)))
                 frame.origin = CGPoint(x: column * Int(brickWidth), y: (row * brickHeight) + topBrickDistanceFromTop )
-                let brick = UIView(frame: frame)
-                brick.backgroundColor = brickBackgroundColor
-                brick.layer.borderColor = UIColor.whiteColor().CGColor
-                brick.layer.borderWidth = 0.5
+                let brick = Brick(frame: frame)                
                 
                 gameView.addSubview(brick)
                 let brickPath = UIBezierPath(rect: brick.frame)
@@ -243,6 +207,37 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
         paddle = nil
     }
     
+    @IBAction func movePaddle(gesture: UIPanGestureRecognizer) {
+        switch gesture.state {
+        case .Ended: fallthrough
+        case .Changed:
+            let translation = gesture.translationInView(gameView)
+            
+            if let paddle = paddle, ball = ball {
+                if translation.x > 0 {
+                    paddle.moveRight()
+                } else if translation.x < 0 {
+                    paddle.moveLeft()
+                }
+                
+                // Specs page 5: 23. Be careful not to move your paddle boundary right on
+                // top of a bouncing ball or the ball might get trapped inside your paddle.
+                if CGRectIntersectsRect(paddle.frame, ball.frame) {
+                    breakoutBehavior.ballBehavior.action = { [unowned self] in
+                        if !CGRectIntersectsRect(paddle.frame, ball.frame) {
+                            self.syncPaddle()
+                        }
+                    }
+                } else {
+                    syncPaddle()
+                }
+            }
+            
+            gesture.setTranslation(CGPointZero, inView: gameView)
+        default: break
+        }
+    }
+    
     private func syncPaddle() {
         if let paddleView = paddle {
             // Why ovalInRect?
@@ -268,9 +263,20 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
         
         if ball == nil {
             ball = Ball(frame: frame)
-            ball!.backgroundColor = ballColor
-            ball!.layer.cornerRadius = (ball?.bounds.width)!/2
             breakoutBehavior.addBall(ball!)
+        }
+    }
+    
+    private func removeBall() {
+        if ball != nil {
+            breakoutBehavior.removeBall(ball!)
+            ball = nil
+        }
+    }
+    
+    @IBAction func pushBall(gesture: UITapGestureRecognizer) {
+        if let ball = ball {
+            breakoutBehavior.pushBall(ball)
         }
     }
 }

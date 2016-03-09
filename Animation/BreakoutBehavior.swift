@@ -24,7 +24,8 @@ class BreakoutBehavior: UIDynamicBehavior {
         let lazilyCreatedBallBehavior = UIDynamicItemBehavior()
         lazilyCreatedBallBehavior.elasticity = 1.0
         lazilyCreatedBallBehavior.resistance = 0
-        lazilyCreatedBallBehavior.friction = 0
+        lazilyCreatedBallBehavior.friction = 0.5
+        lazilyCreatedBallBehavior.allowsRotation = true
         return lazilyCreatedBallBehavior
     }()
     
@@ -52,15 +53,18 @@ class BreakoutBehavior: UIDynamicBehavior {
         let pushBehavior = UIPushBehavior(items: [ball], mode: UIPushBehaviorMode.Instantaneous)
         let linearVelocity = ballBehavior.linearVelocityForItem(ball)
         
+        if dynamicAnimator?.referenceView?.bounds.size.height > 400 {
+            pushBehavior.magnitude = 0.2
+        } else {
+            pushBehavior.magnitude = 0.1
+        }
+        
         // linearVelocity zero means ball at resting state on paddle
         if linearVelocity == CGPointZero {
-            pushBehavior.magnitude = 0.1
             let lower =  CGFloat(((90-15) * M_PI)/180)
             let upper = CGFloat(((90+15) * M_PI)/180)
             pushBehavior.angle = CGFloat.randomRadian(lower, upper)
         } else {
-            pushBehavior.magnitude = 0.1
-            
             // derive the opposite angle from current velocity
             let currentAngle = Double(atan2(linearVelocity.y, linearVelocity.x));
             let oppositeAngle = CGFloat((currentAngle + M_PI) % (2 * M_PI))
@@ -92,9 +96,7 @@ class BreakoutBehavior: UIDynamicBehavior {
         gravity.removeItem(ball)
         collidor.removeItem(ball)
         ballBehavior.removeItem(ball)
-        ball.removeFromSuperview()
-        
-        print("did remove ball")
+        ball.removeFromSuperview()        
     }
 }
 

@@ -82,7 +82,8 @@
                     </view>
                     <connections>
                         <outlet property="gameView" destination="gns-0q-bmU" id="C1t-B0-VC1"/>
-                        <outlet property="panGesture" destination="gcN-ck-xVw" id="LDy-yM-5W1"/>
+                        <outlet property="movePaddleGesture" destination="gcN-ck-xVw" id="SE0-cK-TPp"/>
+                        <outlet property="pushBallGesture" destination="imO-7i-WrG" id="OBf-bR-Fdx"/>
                         <outlet property="startGameLabel" destination="siK-Sm-bpK" id="yo2-N2-cyA"/>
                         <outlet property="startView" destination="d46-ME-6Oa" id="lX1-HG-45J"/>
                     </connections>
@@ -90,7 +91,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
                 <tapGestureRecognizer id="imO-7i-WrG">
                     <connections>
-                        <action selector="tap:" destination="BYZ-38-t0r" id="Q0F-wN-Hu3"/>
+                        <action selector="pushBall:" destination="BYZ-38-t0r" id="bdV-3y-Hzg"/>
                     </connections>
                 </tapGestureRecognizer>
                 <panGestureRecognizer minimumNumberOfTouches="1" id="gcN-ck-xVw">

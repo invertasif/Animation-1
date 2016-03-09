@@ -8,7 +8,7 @@
 
 import Foundation
 
-class Paddle: UIView {
+class Paddle: UIImageView {
     private let minAcceptableSpeed = 5
     private let maxAcceptableSpeed = 200
     private let minAcceptableWidth = 20
@@ -22,15 +22,14 @@ class Paddle: UIView {
     private var currentSpeed: Int!
     private var availableSpeed: [Int]!
     private var currentWidth: Int!
-    private var availableWidth: [Int]!
-    
-    private let color = UIColor.greenColor()    
+    private var availableWidth: [Int]!    
     private var referenceView: UIView!
     
     init(referenceView: UIView) {
         super.init(frame: CGRectZero)
-        
         self.referenceView = referenceView
+        
+        image = UIImage(named: "paddle")
         
         // init width first, because speed will depend on width
         // width:
@@ -54,8 +53,6 @@ class Paddle: UIView {
         // position is derived by getOriginXFromCenterX
         frame.origin.x = getOriginXFromCenterX(referenceView.bounds.size.width/2)
         frame.origin.y = referenceView.bounds.size.height - CGFloat(height)
-        
-        backgroundColor = color
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -146,7 +143,6 @@ class Paddle: UIView {
         currentSpeed = availableSpeed[approxMidIndex]
         
 //        currentSpeed = availableSpeed[0]
-        currentSpeed = 12
         
     }
     
