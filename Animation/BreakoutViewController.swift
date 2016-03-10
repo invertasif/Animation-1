@@ -43,12 +43,14 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
         super.viewDidLoad()
         animator.addBehavior(breakoutBehavior)
         breakoutBehavior.collidor.collisionDelegate = self
-        breakoutBehavior.collidor.action = { 
-            if let ball = self.ball {
+        breakoutBehavior.collidor.action = { [unowned self] in
+            for ball in self.balls {
                 if !CGRectIntersectsRect(ball.frame, self.gameView.frame) {
-                    self.removeBall()
-                    self.gameOver()
+                    self.removeBall(ball)
                 }
+            }
+            if self.balls.count == 0 {
+                self.gameOver()
             }
         }
     }
@@ -56,7 +58,6 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()        
         createPaddle()
-        createBall()
         createBricks()
         addGameViewBoundary()
     }
@@ -76,6 +77,8 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
         gameView.userInteractionEnabled = true
         pushBallGesture.enabled = true
         movePaddleGesture.enabled = true
+        
+        createBall()
     }
     
     private func gameOver() {
@@ -90,7 +93,6 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
         removeAllBricks()
         
         createPaddle()
-        createBall()
         createBricks()
     }
     
@@ -141,8 +143,8 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
                     case .LargerPaddle:
                         paddle?.increaseWidth()
                         syncPaddle()
-                    case .DoubleBall:
-                        break
+                    case .AddBall:
+                        createBall()
                     default:break
                     }
                 }
@@ -237,24 +239,22 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
         switch gesture.state {
         case .Ended: fallthrough
         case .Changed:
-            let translation = gesture.translationInView(gameView)
             let velocity = gesture.velocityInView(gameView)
-            print("translation: \(translation)")
-            print("velocity: \(velocity)")
-            
-            if let paddle = paddle, ball = ball {
+            if let paddle = paddle {
                 paddle.move(velocity)
                 
                 // Specs page 5: 23. Be careful not to move your paddle boundary right on
                 // top of a bouncing ball or the ball might get trapped inside your paddle.
-                if CGRectIntersectsRect(paddle.frame, ball.frame) {
-                    breakoutBehavior.ballBehavior.action = { [unowned self] in
-                        if !CGRectIntersectsRect(paddle.frame, ball.frame) {
-                            self.syncPaddle()
+                for ball in balls {
+                    if CGRectIntersectsRect(paddle.frame, ball.frame) {
+                        breakoutBehavior.ballBehavior.action = { [unowned self] in
+                            if !CGRectIntersectsRect(paddle.frame, ball.frame) {
+                                self.syncPaddle()
+                            }
                         }
+                    } else {
+                        syncPaddle()
                     }
-                } else {
-                    syncPaddle()
                 }
             }
             
@@ -278,29 +278,37 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
     // MARK: - Ball
     
     private let ballSize = CGSize(width: 20, height: 20)
-    private var ball: Ball?
-    private var secondBall: Ball?
+    private var balls = [Ball]()
     
     private func createBall() {
-        var frame = CGRect(origin: CGPointZero, size: ballSize)
-        frame.origin.x = ((paddle?.frame.origin.x)! - ballSize.width / 2) + ((paddle?.frame.size.width)! / 2)
-        frame.origin.y = (paddle?.frame.origin.y)! - ballSize.height
-        
-        if ball == nil {
-            ball = Ball(frame: frame)
-            breakoutBehavior.addBall(ball!)
+        if balls.count == 0 {
+            var frame = CGRect(origin: CGPointZero, size: ballSize)
+            frame.origin.x = ((paddle?.frame.origin.x)! - ballSize.width / 2) + ((paddle?.frame.size.width)! / 2)
+            frame.origin.y = (paddle?.frame.origin.y)! - ballSize.height
+            
+            let ball = Ball(frame: frame)
+            breakoutBehavior.addBall(ball)
+            balls.append(ball)
+        } else {
+            let lastBall = balls.last
+            var frame = CGRect(origin: CGPointZero, size: ballSize)
+            frame.origin.x = (lastBall?.frame.origin.x)!
+            frame.origin.y = (lastBall?.frame.origin.y)!
+            
+            let ball = Ball(frame: frame)
+            breakoutBehavior.addBall(ball)
+            breakoutBehavior.pushBall(ball)
+            balls.append(ball)
         }
     }
         
-    private func removeBall() {
-        if ball != nil {
-            breakoutBehavior.removeBall(ball!)
-            ball = nil
-        }
+    private func removeBall(ball: Ball) {
+        breakoutBehavior.removeBall(ball)
+        balls.removeObject(ball)
     }
     
     @IBAction func pushBall(gesture: UITapGestureRecognizer) {
-        if let ball = ball {
+        for ball in balls {
             breakoutBehavior.pushBall(ball)
         }
     }
@@ -311,3 +319,16 @@ private extension Int {
         return Int(arc4random() % UInt32(self))
     }
 }
+
+private extension Array {
+    mutating func removeObject<U: Equatable>(object: U) -> Bool {
+        for (idx, objectToCompare) in self.enumerate() {  //in old swift use enumerate(self)
+            if let to = objectToCompare as? U {
+                if object == to {
+                    self.removeAtIndex(idx)
+                    return true
+                }
+            }
+        }
+        return false
+    }}

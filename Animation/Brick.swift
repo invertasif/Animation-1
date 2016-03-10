@@ -9,14 +9,14 @@
 import UIKit
 
 enum BrickType: Int {
-    case Regular = 0, SmallerPaddle, LargerPaddle, DoubleBall, Hard
+    case Regular = 0, SmallerPaddle, LargerPaddle, AddBall, Hard
     
     var hitsRequired: Int {
         switch self {
         case .Regular: fallthrough
         case .SmallerPaddle: fallthrough
         case .LargerPaddle: fallthrough
-        case .DoubleBall:
+        case .AddBall:
             return 1
         case .Hard:
             return 3
@@ -31,7 +31,7 @@ enum BrickType: Int {
             return UIColor(red: 225/255.0, green: 232/255.0, blue: 111/255.0, alpha: 1.0)
         case .LargerPaddle:
             return UIColor(red: 194/255.0, green: 231/255.0, blue: 112/255.0, alpha: 1.0)
-        case .DoubleBall:
+        case .AddBall:
             return UIColor(red: 217/255.0, green: 133/255.0, blue: 149/255.0, alpha: 1.0)
         case .Hard:
             return UIColor(red: 127/255.0, green: 106/255.0, blue: 110/255.0, alpha: 1.0)

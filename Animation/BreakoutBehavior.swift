@@ -11,7 +11,7 @@ import UIKit
 class BreakoutBehavior: UIDynamicBehavior {
     lazy var collidor: UICollisionBehavior = {
         let lazilyCreatedCollisionBehavior = UICollisionBehavior()
-        lazilyCreatedCollisionBehavior.translatesReferenceBoundsIntoBoundary = true
+//        lazilyCreatedCollisionBehavior.translatesReferenceBoundsIntoBoundary = true
         return lazilyCreatedCollisionBehavior
     }()
     
