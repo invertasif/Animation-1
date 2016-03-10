@@ -29,9 +29,9 @@ enum BrickType: Int {
         case .SmallerPaddle:
             return UIColor(red: 204/255.0, green: 205/255.0, blue: 153/255.0, alpha: 1.0)
         case .LargerPaddle:
-            return UIColor(red: 204/255.0, green: 52/255.0, blue: 52/255.0, alpha: 1.0)
+            return UIColor(red: 102/255.0, green: 204/255.0, blue: 102/255.0, alpha: 1.0)
         case .Hard:
-            return UIColor(red: 51/255.0, green: 51/255.0, blue: 102/255.0, alpha: 1.0)
+            return UIColor(red: 0/255.0, green: 0/255.0, blue: 0/255.0, alpha: 1.0)
         }
     }
     

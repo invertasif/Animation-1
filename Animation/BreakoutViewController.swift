@@ -137,8 +137,10 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
                     switch brickType {
                     case .SmallerPaddle:
                         paddle?.decreaseWidth()
+                        syncPaddle()
                     case .LargerPaddle:
                         paddle?.increaseWidth()
+                        syncPaddle()
                     default:break
                     }
                 }

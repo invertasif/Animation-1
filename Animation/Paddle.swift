@@ -9,11 +9,11 @@
 import Foundation
 
 class Paddle: UIImageView {
-    private let minAcceptableSpeed = 5
+    private let minAcceptableSpeed = 8
     private let maxAcceptableSpeed = 200
     private let minAcceptableWidth = 20
     private let maxAcceptableWidth = 200
-    private let height: Int = 15
+    private let height = 15.0
     
     // width and speed vars are set as implicity unwrapped optionals
     // these depend on referenceView and we are guaranteeing that they
@@ -29,7 +29,11 @@ class Paddle: UIImageView {
         super.init(frame: CGRectZero)
         self.referenceView = referenceView
         
-        image = UIImage(named: "paddle")
+        backgroundColor = UIColor(red: 102/255.0, green: 153/255.0, blue: 204/255.0, alpha: 1.0)
+        layer.cornerRadius = CGFloat(height / 2.5)
+        
+        layer.borderColor = UIColor(red: 0/255.0, green: 51/255.0, blue: 102/255.0, alpha: 1.0).CGColor
+        layer.borderWidth = 1.7
         
         // init width first, because speed will depend on width
         // width:
@@ -83,20 +87,6 @@ class Paddle: UIImageView {
         )
     }
     
-    func decreaseSpeed() {
-        print("decrease paddle speed")
-        if let currentIndex = availableSpeed.indexOf(currentSpeed) where currentIndex - 1 >= 0 {
-            currentSpeed = availableSpeed[currentIndex-1]
-        }
-    }
-    
-    func increaseSpeed() {
-        print("increase paddle speed")
-        if let currentIndex = availableSpeed.indexOf(currentSpeed) where currentIndex + 1 <= availableSpeed.count - 1 {
-            currentSpeed = availableSpeed[currentIndex+1]
-        }
-    }
-    
     func decreaseWidth() {
         if let currentIndex = availableWidth.indexOf(currentWidth) where currentIndex - 1 >= 0 {
             currentWidth = availableWidth[currentIndex-1]
@@ -123,14 +113,6 @@ class Paddle: UIImageView {
         frame.origin.y = originBeforeWidthChange.y
     }
     
-    func setRandomWidth() {
-        currentWidth = availableWidth[availableWidth.count.random()]
-    }
-    
-    func setRandomSpeed() {
-        currentSpeed = availableSpeed[availableSpeed.count.random()]
-    }
-    
     func setDefaultWidth() {
         // picking an approx mid value from availableWidth
         // ceil produces best results for paddle width after testing on various devices
@@ -139,13 +121,7 @@ class Paddle: UIImageView {
     }
     
     func setDefaultSpeed() {
-        // picking an approx mid value from availableSpeeed
-        // floor produces best results for paddle speed after testing on various devices
-//        let approxMidIndex = Int(floor(Double(availableSpeed.count-1)/2))
-//        currentSpeed = availableSpeed[approxMidIndex]
-        
         currentSpeed = availableSpeed[0]
-        
     }
     
     private func initAvailableWidth() {
