@@ -134,15 +134,15 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
                     brick.animateRemoveFromSuperview()
                     
                     // run any special function the brick is identified with
-//                    switch brickType {
-//                    case .SmallerPaddle:
-//                        paddle?.decreaseWidth()
-//                        syncPaddle()
-//                    case .LargerPaddle:
-//                        paddle?.increaseWidth()
-//                        syncPaddle()
-//                    default:break
-//                    }
+                    switch brickType {
+                    case .SmallerPaddle:
+                        paddle?.decreaseWidth()
+                        syncPaddle()
+                    case .LargerPaddle:
+                        paddle?.increaseWidth()
+                        syncPaddle()
+                    default:break
+                    }
                 }
             }
         }
@@ -201,7 +201,7 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
                         brick = Brick(frame: frame, type: .Regular)
                     }
                 } else {
-                    brick = Brick(frame: frame, type: .Regular)
+                    brick = Brick(frame: frame, type: .LargerPaddle)
                 }
                 
                 gameView.addSubview(brick)
