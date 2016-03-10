@@ -63,28 +63,32 @@ class Paddle: UIImageView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func moveLeft() {
-        guard canPaddleMoveLeft() else { return }
+    func move(velocity: CGPoint) {
         UIView.animateWithDuration(0.0,
             delay: 0.0,
-            options: UIViewAnimationOptions.AllowUserInteraction,
+            options: [UIViewAnimationOptions.AllowUserInteraction, UIViewAnimationOptions.CurveEaseIn],
             animations: {
-                self.center = CGPoint(x: self.center.x - CGFloat(self.currentSpeed), y: self.center.y)
+                self.center = self.getCenterForVelocity(velocity)
             },
             completion: nil
         )
     }
     
-    func moveRight() {
-        guard canPaddleMoveRight() else { return }
-        UIView.animateWithDuration(0.0,
-            delay: 0.0,
-            options: UIViewAnimationOptions.AllowUserInteraction,
-            animations: {
-                self.center = CGPoint(x: self.center.x + CGFloat(self.currentSpeed), y: self.center.y)
-            },
-            completion: nil
-        )
+    private func getCenterForVelocity(velocity: CGPoint) -> CGPoint {
+        var newCenter = CGPoint(x: self.center.x + velocity.x/20, y: self.center.y)
+        
+        let paddleLeftEdgeAtNewCenter = floor(newCenter.x - CGFloat(currentWidth/2))
+        let paddleRightEdgeAtNewCenter = ceil(newCenter.x + CGFloat(currentWidth/2))
+        
+        let referenceViewLeftEdge = floor(referenceView.bounds.origin.x)
+        let referenceViewRightEdge = ceil(referenceView.bounds.width)
+        
+        if paddleLeftEdgeAtNewCenter <= referenceViewLeftEdge {
+            newCenter.x = floor(CGFloat(currentWidth/2))
+        } else if paddleRightEdgeAtNewCenter >= referenceViewRightEdge {
+            newCenter.x = ceil(referenceView.bounds.width - CGFloat(currentWidth/2))
+        }
+        return newCenter
     }
     
     func decreaseWidth() {
@@ -142,24 +146,6 @@ class Paddle: UIImageView {
             }
         }
         self.availableSpeed = availableSpeed
-    }
-    
-    private func canPaddleMoveLeft() -> Bool {
-        let paddleLeftEdge = floor(center.x - CGFloat(currentWidth/2))
-        let referenceViewLeftEdge = floor(referenceView.bounds.origin.x)
-        if paddleLeftEdge <= referenceViewLeftEdge {
-            return false
-        }
-        return true
-    }
-    
-    private func canPaddleMoveRight() -> Bool {
-        let paddleRightEdge = ceil(center.x + CGFloat(currentWidth/2))
-        let referenceViewRightEdge = ceil(referenceView.bounds.width)
-        if paddleRightEdge >= referenceViewRightEdge {
-            return false
-        }
-        return true
     }
     
     private func getOriginXFromCenterX(centerX: CGFloat) -> CGFloat {

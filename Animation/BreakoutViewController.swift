@@ -134,15 +134,15 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
                     brick.animateRemoveFromSuperview()
                     
                     // run any special function the brick is identified with
-                    switch brickType {
-                    case .SmallerPaddle:
-                        paddle?.decreaseWidth()
-                        syncPaddle()
-                    case .LargerPaddle:
-                        paddle?.increaseWidth()
-                        syncPaddle()
-                    default:break
-                    }
+//                    switch brickType {
+//                    case .SmallerPaddle:
+//                        paddle?.decreaseWidth()
+//                        syncPaddle()
+//                    case .LargerPaddle:
+//                        paddle?.increaseWidth()
+//                        syncPaddle()
+//                    default:break
+//                    }
                 }
             }
         }
@@ -236,13 +236,12 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
         case .Ended: fallthrough
         case .Changed:
             let translation = gesture.translationInView(gameView)
+            let velocity = gesture.velocityInView(gameView)
+            print("translation: \(translation)")
+            print("velocity: \(velocity)")
             
             if let paddle = paddle, ball = ball {
-                if translation.x > 0 {
-                    paddle.moveRight()
-                } else if translation.x < 0 {
-                    paddle.moveLeft()
-                }
+                paddle.move(velocity)
                 
                 // Specs page 5: 23. Be careful not to move your paddle boundary right on
                 // top of a bouncing ball or the ball might get trapped inside your paddle.
