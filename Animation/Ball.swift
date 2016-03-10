@@ -19,7 +19,7 @@ class Ball: UIImageView {
         super.init(frame: frame)
         layer.cornerRadius = frame.width / 2.0
         image = UIImage(named: "ball")
-        backgroundColor = UIColor(red: 255/255.0, green: 102/255.0, blue: 102/255.0, alpha: 1.0)
+        backgroundColor = UIColor(red: 243/255.0, green: 41/255.0, blue: 56/255.0, alpha: 1.0)
     }
 
     required init?(coder aDecoder: NSCoder) {

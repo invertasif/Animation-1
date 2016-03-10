@@ -50,14 +50,14 @@ class BreakoutBehavior: UIDynamicBehavior {
     
     // MARK: - Ball
     
-    func pushBall(ball: UIView) {
+    func pushBall(ball: Ball) {
         let pushBehavior = UIPushBehavior(items: [ball], mode: UIPushBehaviorMode.Instantaneous)
         let linearVelocity = ballBehavior.linearVelocityForItem(ball)
         
         if dynamicAnimator?.referenceView?.bounds.size.height > 400 {
             pushBehavior.magnitude = 0.2
         } else {
-            pushBehavior.magnitude = 0.1
+            pushBehavior.magnitude = 0.2
         }
         
         // linearVelocity zero means ball at resting state on paddle

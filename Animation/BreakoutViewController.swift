@@ -141,6 +141,8 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
                     case .LargerPaddle:
                         paddle?.increaseWidth()
                         syncPaddle()
+                    case .DoubleBall:
+                        break
                     default:break
                     }
                 }
@@ -201,7 +203,7 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
                         brick = Brick(frame: frame, type: .Regular)
                     }
                 } else {
-                    brick = Brick(frame: frame, type: .LargerPaddle)
+                    brick = Brick(frame: frame, type: .Regular)
                 }
                 
                 gameView.addSubview(brick)
@@ -276,8 +278,8 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
     // MARK: - Ball
     
     private let ballSize = CGSize(width: 20, height: 20)
-    private let ballColor = UIColor.redColor()
-    private var ball: UIView?
+    private var ball: Ball?
+    private var secondBall: Ball?
     
     private func createBall() {
         var frame = CGRect(origin: CGPointZero, size: ballSize)
@@ -289,7 +291,7 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
             breakoutBehavior.addBall(ball!)
         }
     }
-    
+        
     private func removeBall() {
         if ball != nil {
             breakoutBehavior.removeBall(ball!)

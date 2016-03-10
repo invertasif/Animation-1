@@ -10,10 +10,6 @@ import Foundation
 
 class Paddle: UIImageView {
     private let defaultVelocityDivider: CGFloat = 20
-    private var currentVelocityDivider: CGFloat = 20
-    private let velocityStepper: CGFloat = 5
-    private let minVelocityDivider: CGFloat = 5
-    private let maxVelocityDivider: CGFloat = 35
     
     private let defaultWidth: CGFloat = 80
     private var currentWidth: CGFloat = 80
@@ -29,10 +25,10 @@ class Paddle: UIImageView {
         super.init(frame: CGRectZero)
         self.referenceView = referenceView
         
-        backgroundColor = UIColor(red: 102/255.0, green: 153/255.0, blue: 204/255.0, alpha: 1.0)
+        backgroundColor = UIColor(red: 141/255.0, green: 185/255.0, blue: 230/255.0, alpha: 1.0)
         layer.cornerRadius = CGFloat(height / 2.5)
         
-        layer.borderColor = UIColor(red: 0/255.0, green: 51/255.0, blue: 102/255.0, alpha: 1.0).CGColor
+        layer.borderColor = UIColor(red: 0/255.0, green: 52/255.0, blue: 120/255.0, alpha: 1.0).CGColor
         layer.borderWidth = 1.7
         
         frame = CGRect(origin: CGPointZero, size: CGSize(width: currentWidth, height: height))
@@ -45,7 +41,7 @@ class Paddle: UIImageView {
     }
     
     func move(velocity: CGPoint) {
-        let proposedCenter = CGPoint(x: center.x + velocity.x/currentVelocityDivider, y: self.center.y)
+        let proposedCenter = CGPoint(x: center.x + velocity.x/defaultVelocityDivider, y: self.center.y)
         let newCenter = getCenterForProposedCenter(proposedCenter)
         
         UIView.animateWithDuration(0.0,

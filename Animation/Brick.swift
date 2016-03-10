@@ -9,13 +9,14 @@
 import UIKit
 
 enum BrickType: Int {
-    case Regular = 0, Hard, SmallerPaddle, LargerPaddle
+    case Regular = 0, SmallerPaddle, LargerPaddle, DoubleBall, Hard
     
     var hitsRequired: Int {
         switch self {
         case .Regular: fallthrough
         case .SmallerPaddle: fallthrough
-        case .LargerPaddle:
+        case .LargerPaddle: fallthrough
+        case .DoubleBall:
             return 1
         case .Hard:
             return 3
@@ -25,22 +26,26 @@ enum BrickType: Int {
     var color: UIColor {
         switch self {
         case .Regular:
-            return UIColor(red: 102/255.0, green: 102/255.0, blue: 102/255.0, alpha: 1.0)
+            return UIColor(red: 177/255.0, green: 160/255.0, blue: 164/255.0, alpha: 1.0)
         case .SmallerPaddle:
-            return UIColor(red: 204/255.0, green: 205/255.0, blue: 153/255.0, alpha: 1.0)
+            return UIColor(red: 225/255.0, green: 232/255.0, blue: 111/255.0, alpha: 1.0)
         case .LargerPaddle:
-            return UIColor(red: 102/255.0, green: 204/255.0, blue: 102/255.0, alpha: 1.0)
+            return UIColor(red: 194/255.0, green: 231/255.0, blue: 112/255.0, alpha: 1.0)
+        case .DoubleBall:
+            return UIColor(red: 217/255.0, green: 133/255.0, blue: 149/255.0, alpha: 1.0)
         case .Hard:
-            return UIColor(red: 0/255.0, green: 0/255.0, blue: 0/255.0, alpha: 1.0)
+            return UIColor(red: 127/255.0, green: 106/255.0, blue: 110/255.0, alpha: 1.0)
         }
     }
     
     static var count: Int {
-        return LargerPaddle.hashValue + 1
+        return Hard.hashValue + 1
     }
 }
 
 class Brick: UIView {
+    let padding: CGFloat = 4.0
+    
     var currentHits = 0 {
         didSet {
             if type?.hitsRequired > 1 {
@@ -54,9 +59,9 @@ class Brick: UIView {
         super.init(frame: frame)
         self.type = type
         
-        backgroundColor = type.color
+        backgroundColor = type.color.colorWithAlphaComponent(0.6)
         layer.borderColor = UIColor.whiteColor().CGColor
-        layer.borderWidth = 2.0
+        layer.borderWidth = padding - 2
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -91,11 +96,14 @@ class Brick: UIView {
     }
     
     private func colorAlphaDown() {
-        var alpha: CGFloat = 1.0
-        if let hitsRequired = type?.hitsRequired {
-            alpha = CGFloat(1 - (Double(currentHits) / Double(hitsRequired))/2)
-        }
+        let alpha = CGFloat(1 - Double(currentHits + 1) * 0.25)
         backgroundColor = type?.color.colorWithAlphaComponent(alpha)
+    }
+    
+    override func drawRect(rect: CGRect) {
+        let path = UIBezierPath(rect: CGRect(x: bounds.origin.x + padding, y: bounds.origin.y + padding, width: bounds.size.width - padding * 2, height: bounds.size.height - padding * 2))
+        type?.color.set()
+        path.fill()
     }
 
 }
