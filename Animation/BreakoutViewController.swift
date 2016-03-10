@@ -270,7 +270,16 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
             // for your paddle be an oval (even if the paddle itself still looks
             // like a rectangle). It makes the bouncing ball come off the paddle
             // more interestingly.
-            let paddleBoundary = UIBezierPath(ovalInRect: paddleView.frame)
+            
+            var paddleBoundary: UIBezierPath!
+            
+            // When the game starts, we need the paddle boundary to be rectangular
+            // otherwise the balls resting on the paddle will fall off the screen
+            if balls.count == 0 {
+                paddleBoundary = UIBezierPath(rect: paddleView.frame)
+            } else {
+                paddleBoundary = UIBezierPath(ovalInRect: paddleView.frame)
+            }
             breakoutBehavior.addBoundary(paddleBoundary, named: BoundaryNames.PaddleBoundary)
         }
     }
@@ -282,13 +291,27 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
     
     private func createBall() {
         if balls.count == 0 {
-            var frame = CGRect(origin: CGPointZero, size: ballSize)
-            frame.origin.x = ((paddle?.frame.origin.x)! - ballSize.width / 2) + ((paddle?.frame.size.width)! / 2)
-            frame.origin.y = (paddle?.frame.origin.y)! - ballSize.height
             
-            let ball = Ball(frame: frame)
-            breakoutBehavior.addBall(ball)
-            balls.append(ball)
+            let numberOfBouncingBalls = 3
+            
+            for i in 1...numberOfBouncingBalls {
+                var frame = CGRect(origin: CGPointZero, size: ballSize)
+                
+                let widthOnPaddleForEachBall = (paddle?.bounds.size.width)! / CGFloat(numberOfBouncingBalls)
+                let centerOfWidthOnPaddleForEachBall = widthOnPaddleForEachBall / 2
+                
+                frame.origin.x = (paddle?.frame.origin.x)!
+                    + (widthOnPaddleForEachBall * CGFloat(i))
+                    - centerOfWidthOnPaddleForEachBall
+                    - (ballSize.width / 2)
+                
+                frame.origin.y = (paddle?.frame.origin.y)! - ballSize.height
+                
+                let ball = Ball(frame: frame)
+                breakoutBehavior.addBall(ball)
+                balls.append(ball)
+            }
+
         } else {
             let lastBall = balls.last
             var frame = CGRect(origin: CGPointZero, size: ballSize)

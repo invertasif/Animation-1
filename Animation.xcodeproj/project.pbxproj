@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2056F2B51C91AEE60098B7EF /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2056F2B41C91AEE60098B7EF /* SettingsViewController.swift */; };
 		2087EA0B1C87796400581C6D /* Paddle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2087EA0A1C87796400581C6D /* Paddle.swift */; };
 		20C6A76E1C8FC519001C70BC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 20C6A76D1C8FC519001C70BC /* Assets.xcassets */; };
 		20C6A7721C8FCB12001C70BC /* Brick.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C6A7711C8FCB12001C70BC /* Brick.swift */; };
@@ -19,6 +20,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2056F2B41C91AEE60098B7EF /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		2087EA0A1C87796400581C6D /* Paddle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Paddle.swift; sourceTree = "<group>"; };
 		20B3857A1C84BE27005B44C9 /* UIDynamicAnimatorBridgingHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UIDynamicAnimatorBridgingHeader.h; sourceTree = "<group>"; };
 		20C6A76D1C8FC519001C70BC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -65,6 +67,7 @@
 			children = (
 				20CDBF571C609510003DC102 /* AppDelegate.swift */,
 				20CDBF691C60952A003DC102 /* BreakoutViewController.swift */,
+				2056F2B41C91AEE60098B7EF /* SettingsViewController.swift */,
 				20F2914A1C7417CF009882E9 /* BreakoutBehavior.swift */,
 				20F2914C1C742404009882E9 /* Ball.swift */,
 				20C6A7711C8FCB12001C70BC /* Brick.swift */,
@@ -151,6 +154,7 @@
 			files = (
 				20F2914B1C7417CF009882E9 /* BreakoutBehavior.swift in Sources */,
 				20CDBF581C609510003DC102 /* AppDelegate.swift in Sources */,
+				2056F2B51C91AEE60098B7EF /* SettingsViewController.swift in Sources */,
 				2087EA0B1C87796400581C6D /* Paddle.swift in Sources */,
 				20CDBF6A1C60952A003DC102 /* BreakoutViewController.swift in Sources */,
 				20F2914D1C742404009882E9 /* Ball.swift in Sources */,
