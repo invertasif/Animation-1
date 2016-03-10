@@ -54,10 +54,28 @@ class BreakoutBehavior: UIDynamicBehavior {
         let pushBehavior = UIPushBehavior(items: [ball], mode: UIPushBehaviorMode.Instantaneous)
         let linearVelocity = ballBehavior.linearVelocityForItem(ball)
         
-        if dynamicAnimator?.referenceView?.bounds.size.height > 400 {
+        // If the device screen resolution height is too large, 
+        // the default magnitude 0.1 will not cause the ball to 
+        // have enough velocity to reach the bricks or even if
+        // it does, will result in poor gameplay
+        // iPhone   5, 5s   320 × 568
+        //          6       375 × 667
+        //          6+      414 × 736
+        // iPad     2       1024 x 768
+        //          Air     2048 x 1536
+        //          Pro     2732 x 2048
+        
+        let referenceViewHeight = dynamicAnimator?.referenceView?.bounds.size.height
+        if referenceViewHeight > 568 {
             pushBehavior.magnitude = 0.2
+        } else if referenceViewHeight > 736 {
+            pushBehavior.magnitude = 0.3
+        } else if referenceViewHeight > 768 {
+            pushBehavior.magnitude = 0.35
+        } else if referenceViewHeight > 1536 {
+            pushBehavior.magnitude = 0.4
         } else {
-            pushBehavior.magnitude = 0.2
+            pushBehavior.magnitude = 0.15
         }
         
         // linearVelocity zero means ball at resting state on paddle
