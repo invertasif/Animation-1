@@ -17,7 +17,7 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
     }()
     
     func dynamicAnimatorDidPause(animator: UIDynamicAnimator) {
-        print("dynamicAnimatorDidPause")
+//        print("dynamicAnimatorDidPause")
     }
     
     private let breakoutBehavior = BreakoutBehavior()
@@ -53,6 +53,11 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
                 self.gameOver()
             }
         }
+        
+        NSNotificationCenter.defaultCenter().addObserver(self,
+            selector: "settingsDidUpdate",
+            name: "BreakoutViewControllerUpdateSettings",
+            object: nil)
     }
     
     override func viewDidLayoutSubviews() {
@@ -60,6 +65,12 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
         createPaddle()
         createBricks()
         addGameViewBoundary()
+    }
+    
+    // MARK: - Settings were updated
+    func settingsDidUpdate() {
+        breakoutBehavior.gravity.magnitude = UserSettings.sharedInstance.gravity
+        breakoutBehavior.ballBehavior.elasticity = UserSettings.sharedInstance.elasticity
     }
     
     // MARK: - Gestures
@@ -122,7 +133,7 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
     private let brickHeight = 30
     private let bricksPerRow = 6
     private let brickBackgroundColor = UIColor.blueColor()
-    private let brickRows = 4
+//    private let brickRows = 4
     private let topBrickDistanceFromTop = 100
     
     func collisionBehavior(behavior: UICollisionBehavior, beganContactForItem item: UIDynamicItem, withBoundaryIdentifier identifier: NSCopying?, atPoint p: CGPoint) {
@@ -163,17 +174,21 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
     private func createBricks() {
         guard bricks.isEmpty else { return }
         
-        let maxSpecialBricks = 6
+        let brickRows = UserSettings.sharedInstance.numberOfTotalBricks / bricksPerRow
+        
+        var userEnabledSpecialBrickTypes = [Int]()
+        if UserSettings.sharedInstance.specialBrickSmallerPaddleEnabled { userEnabledSpecialBrickTypes.append(BrickType.SmallerPaddle.rawValue) }
+        if UserSettings.sharedInstance.specialBrickLargerPaddleEnabled { userEnabledSpecialBrickTypes.append(BrickType.LargerPaddle.rawValue) }
+        if UserSettings.sharedInstance.specialBrickAddBallEnabled { userEnabledSpecialBrickTypes.append(BrickType.AddBall.rawValue) }
+        if UserSettings.sharedInstance.specialBrickHardEnabled { userEnabledSpecialBrickTypes.append(BrickType.Hard.rawValue) }
+        
+        let maxSpecialBricks = UserSettings.sharedInstance.numberOfSpecialBricks
         var specialBricksMatrix = [(row: Int, col: Int)]()
         repeat {
             let randomRow = (brickRows).random()
             let randomCol = (bricksPerRow).random()
             let doesContainRandomPosition = specialBricksMatrix.contains({ (position: (row: Int, col: Int)) -> Bool in
-                if position.row == randomRow && position.col == randomCol {
-                    return true
-                } else {
-                    return false
-                }
+                if position.row == randomRow && position.col == randomCol { return true } else { return false }
             })
             if doesContainRandomPosition == false {
                 specialBricksMatrix.append((row: randomRow, col: randomCol))
@@ -189,17 +204,14 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
                 frame.origin = CGPoint(x: column * Int(brickWidth), y: (row * brickHeight) + topBrickDistanceFromTop )
                 
                 let doesContainRandomPosition = specialBricksMatrix.contains({ (position: (row: Int, col: Int)) -> Bool in
-                    if position.row == row && position.col == column {
-                        return true
-                    } else {
-                        return false
-                    }
+                    if position.row == row && position.col == column { return true } else { return false }
                 })
                 
                 var brick: Brick!
-                if doesContainRandomPosition == true {
-                    let randomSpecialBrickTypeIndex = (BrickType.count - 1).random() + 1
-                    if let brickType = BrickType(rawValue: randomSpecialBrickTypeIndex) {
+                if !userEnabledSpecialBrickTypes.isEmpty && doesContainRandomPosition == true {
+                    let randomSpecialBrickTypeIndex = (userEnabledSpecialBrickTypes.count).random()
+                    let randomSpecialBrickTypeRawValue = userEnabledSpecialBrickTypes[randomSpecialBrickTypeIndex]
+                    if let brickType = BrickType(rawValue: randomSpecialBrickTypeRawValue) {
                         brick = Brick(frame: frame, type: brickType)
                     } else {
                         brick = Brick(frame: frame, type: .Regular)
@@ -292,7 +304,7 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
     private func createBall() {
         if balls.count == 0 {
             
-            let numberOfBouncingBalls = 3
+            let numberOfBouncingBalls = UserSettings.sharedInstance.numberOfBalls
             
             for i in 1...numberOfBouncingBalls {
                 var frame = CGRect(origin: CGPointZero, size: ballSize)

@@ -17,7 +17,7 @@ class BreakoutBehavior: UIDynamicBehavior {
     
     lazy var gravity: UIGravityBehavior = {
         let lazilyCreatedGravityBehavior = UIGravityBehavior()
-        lazilyCreatedGravityBehavior.magnitude = 0.1
+        lazilyCreatedGravityBehavior.magnitude = UserSettings.sharedInstance.gravity
         return lazilyCreatedGravityBehavior
     }()
     
