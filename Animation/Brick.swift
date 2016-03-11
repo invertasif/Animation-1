@@ -68,33 +68,6 @@ class Brick: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func animateRemoveFromSuperview() {
-        UIView.animateWithDuration(0.2,
-            animations: {
-                self.alpha = 0
-            },
-            completion: { didComplete in
-                self.alpha = 1
-                UIView.animateWithDuration(0.2,
-                    animations: {
-                        self.alpha = 0
-                    },
-                    completion: { didComplete in
-                        self.alpha = 1
-                        UIView.animateWithDuration(0.8,
-                            animations: {
-                                self.alpha = 0
-                            },
-                            completion: { didComplete in
-                                self.removeFromSuperview()
-                            }
-                        )
-                    }
-                )
-            }
-        )
-    }
-    
     private func colorAlphaDown() {
         let alpha = CGFloat(1 - Double(currentHits + 1) * 0.25)
         backgroundColor = type?.color.colorWithAlphaComponent(alpha)

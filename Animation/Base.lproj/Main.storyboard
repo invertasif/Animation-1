@@ -32,7 +32,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="551"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Start Game" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="siK-Sm-bpK">
-                                        <rect key="frame" x="234" y="258.5" width="132" height="32.5"/>
+                                        <rect key="frame" x="234" y="259.5" width="132" height="32.5"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="33" id="6vK-V7-mFH"/>
                                         </constraints>
@@ -46,24 +46,32 @@
                                         </variation>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Breakout" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uQo-24-d7v">
-                                        <rect key="frame" x="275" y="224.5" width="68.5" height="19.5"/>
+                                        <rect key="frame" x="275" y="225.5" width="68.5" height="19.5"/>
                                         <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
                                         <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="breakout" translatesAutoresizingMaskIntoConstraints="NO" id="fiR-qI-2F5">
-                                        <rect key="frame" x="234" y="217.5" width="33" height="33"/>
+                                        <rect key="frame" x="234" y="218.5" width="33" height="33"/>
                                     </imageView>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Tap to Start" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="enG-iU-jmd">
+                                        <rect key="frame" x="255.5" y="300" width="89" height="19.5"/>
+                                        <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
+                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
                                 </subviews>
                                 <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                 <gestureRecognizers/>
                                 <constraints>
                                     <constraint firstItem="uQo-24-d7v" firstAttribute="leading" secondItem="fiR-qI-2F5" secondAttribute="trailing" constant="8" symbolic="YES" id="3oM-w4-dd1"/>
                                     <constraint firstItem="siK-Sm-bpK" firstAttribute="centerY" secondItem="d46-ME-6Oa" secondAttribute="centerY" id="9rI-iO-dCo"/>
+                                    <constraint firstItem="enG-iU-jmd" firstAttribute="centerX" secondItem="siK-Sm-bpK" secondAttribute="centerX" id="Glz-d3-7jq"/>
                                     <constraint firstItem="siK-Sm-bpK" firstAttribute="centerX" secondItem="d46-ME-6Oa" secondAttribute="centerX" id="NmJ-RA-reP"/>
                                     <constraint firstItem="siK-Sm-bpK" firstAttribute="top" secondItem="fiR-qI-2F5" secondAttribute="bottom" constant="8" symbolic="YES" id="Zt6-sI-SKV"/>
                                     <constraint firstItem="fiR-qI-2F5" firstAttribute="leading" secondItem="siK-Sm-bpK" secondAttribute="leading" id="bPV-G8-pwN"/>
                                     <constraint firstItem="uQo-24-d7v" firstAttribute="centerY" secondItem="fiR-qI-2F5" secondAttribute="centerY" id="d9R-Ef-K8B"/>
+                                    <constraint firstItem="enG-iU-jmd" firstAttribute="top" secondItem="siK-Sm-bpK" secondAttribute="bottom" constant="8" id="qHI-JG-erP"/>
                                 </constraints>
                                 <connections>
                                     <outletCollection property="gestureRecognizers" destination="tvi-Lb-A6b" appends="YES" id="HHh-fs-0PJ"/>

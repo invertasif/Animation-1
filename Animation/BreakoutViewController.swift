@@ -8,11 +8,15 @@
 
 import UIKit
 
+enum GameStatus {
+    case GameOver, YouWon
+}
+
 class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICollisionBehaviorDelegate {
     private lazy var animator: UIDynamicAnimator = {
         let lazilyCreatedDynamicAnimator = UIDynamicAnimator(referenceView: self.gameView)
         lazilyCreatedDynamicAnimator.delegate = self
-//        lazilyCreatedDynamicAnimator.debugEnabled = true
+        lazilyCreatedDynamicAnimator.debugEnabled = true
         return lazilyCreatedDynamicAnimator
     }()
     
@@ -32,6 +36,7 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
     
     struct Constants {
         static let GameOverText = "Game Over"
+        static let GameWinText = "You Won!"
     }
     
     // used for identifying colliding bricks and removing from superview
@@ -44,13 +49,15 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
         animator.addBehavior(breakoutBehavior)
         breakoutBehavior.collidor.collisionDelegate = self
         breakoutBehavior.collidor.action = { [unowned self] in
-            for ball in self.balls {
-                if !CGRectIntersectsRect(ball.frame, self.gameView.frame) {
-                    self.removeBall(ball)
+            if self.startView.hidden == true {
+                for ball in self.balls {
+                    if !CGRectIntersectsRect(ball.frame, self.gameView.frame) { self.removeBall(ball) }
                 }
-            }
-            if self.balls.count == 0 && self.frozenBalls == nil {
-                self.gameOver()
+                if self.balls.count == 0 && self.frozenBalls == nil { self.gameOver(GameStatus.GameOver) }
+                if self.balls.count > 0 && self.bricks.count == 0 {
+                    self.removeAllBalls()
+                    self.gameOver(GameStatus.YouWon)
+                }
             }
         }
         
@@ -109,13 +116,21 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
         createBall()
     }
     
-    private func gameOver() {
+    private func gameOver(status: GameStatus) {
+        NSLog("game over")
+        
         gameView.userInteractionEnabled = false
         movePaddleGesture.enabled = false
         pushBallGesture.enabled = false
         
         startView.hidden = false
-        startGameLabel.text = Constants.GameOverText
+        
+        switch status {
+        case .GameOver:
+            startGameLabel.text = Constants.GameOverText
+        case .YouWon:
+            startGameLabel.text = Constants.GameWinText
+        }
         
         removePaddle()
         removeAllBricks()
@@ -156,9 +171,34 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
             if let brick = bricks[identifier], brickType = brick.type {
                 brick.currentHits++
                 if brick.currentHits >= brickType.hitsRequired {
-                    bricks.removeValueForKey(identifier)
+                    
                     breakoutBehavior.removeBoundary(named: identifier)
-                    brick.animateRemoveFromSuperview()
+                    
+                    UIView.animateWithDuration(0.2,
+                        animations: {
+                            brick.alpha = 0
+                        },
+                        completion: { didComplete in
+                            brick.alpha = 1
+                            UIView.animateWithDuration(0.2,
+                                animations: {
+                                    brick.alpha = 0
+                                },
+                                completion: { didComplete in
+                                    brick.alpha = 1
+                                    UIView.animateWithDuration(0.8,
+                                        animations: {
+                                            brick.alpha = 0
+                                        },
+                                        completion: { didComplete in
+                                            brick.removeFromSuperview()
+                                            self.bricks.removeValueForKey(identifier)
+                                        }
+                                    )
+                                }
+                            )
+                        }
+                    )
                     
                     // run any special function the brick is identified with
                     switch brickType {
@@ -247,7 +287,8 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
     
     private var paddle: Paddle?
     
-    private func createPaddle() {        
+    private func createPaddle() {
+        firstHitRequiredFromPaddle = true
         if paddle == nil {
             paddle = Paddle(referenceView: gameView)
             gameView.addSubview(paddle!)
@@ -301,7 +342,7 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
             
             // When the game starts, we need the paddle boundary to be rectangular
             // otherwise the balls resting on the paddle will fall off the screen
-            if balls.count == 0 {
+            if firstHitRequiredFromPaddle {
                 paddleBoundary = UIBezierPath(rect: paddleView.frame)
             } else {
                 paddleBoundary = UIBezierPath(ovalInRect: paddleView.frame)
@@ -314,7 +355,7 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
     
     private let ballSize = CGSize(width: 20, height: 20)
     private var balls = [Ball]()
-    private var firstHitFromPaddle = true
+    private var firstHitRequiredFromPaddle = true
     
     // used to restore game when user taps the settings screen and comes back
     private var frozenBalls: [Ball]?
@@ -341,9 +382,7 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
     }
     
     private func createBall() {
-        firstHitFromPaddle = true
         if balls.count == 0 {
-            
             let numberOfBouncingBalls = UserSettings.sharedInstance.numberOfBalls
             
             for i in 1...numberOfBouncingBalls {
@@ -389,11 +428,12 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
     }
     
     @IBAction func pushBall(gesture: UITapGestureRecognizer) {
-        if firstHitFromPaddle {
+        if firstHitRequiredFromPaddle {
             for ball in balls {
                 breakoutBehavior.pushBallFromPaddle(ball)
             }
-            firstHitFromPaddle = false
+            firstHitRequiredFromPaddle = false
+            syncPaddle()
         } else {
             for ball in balls {
                 breakoutBehavior.pushBall(ball)
