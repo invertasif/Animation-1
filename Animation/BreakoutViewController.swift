@@ -62,9 +62,7 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()        
-        createPaddle()
-        createBricks()
-        addGameViewBoundary()
+        
     }
     
     override func viewDidAppear(animated: Bool) {
@@ -105,6 +103,9 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
         pushBallGesture.enabled = true
         movePaddleGesture.enabled = true
         
+        createPaddle()
+        createBricks()
+        addGameViewBoundary()
         createBall()
     }
     
@@ -118,9 +119,6 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
         
         removePaddle()
         removeAllBricks()
-        
-        createPaddle()
-        createBricks()
     }
     
     // MARK: - Game view

@@ -35,6 +35,7 @@ class BreakoutBehavior: UIDynamicBehavior {
         addChildBehavior(gravity)
         addChildBehavior(collidor)
         addChildBehavior(ballBehavior)
+        
     }
     
     // MARK: - Boundaries
@@ -115,9 +116,10 @@ class BreakoutBehavior: UIDynamicBehavior {
     
     func pushRestoredBall(ball: Ball) {
         let pushBehavior = UIPushBehavior(items: [ball], mode: UIPushBehaviorMode.Instantaneous)
-        pushBehavior.magnitude = 0.1
         
-        if let linearVelocity = ball.linearVelocity {
+        if let linearVelocity = ball.linearVelocity where linearVelocity != CGPointZero {
+            pushBehavior.magnitude = 0.1
+            
             pushBehavior.angle = CGFloat(atan2(linearVelocity.y, linearVelocity.x))
             
             pushBehavior.action = { [unowned pushBehavior] in
