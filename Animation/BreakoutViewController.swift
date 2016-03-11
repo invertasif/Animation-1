@@ -49,7 +49,7 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
                     self.removeBall(ball)
                 }
             }
-            if self.balls.count == 0 {
+            if self.balls.count == 0 && self.frozenBalls == nil {
                 self.gameOver()
             }
         }
@@ -65,6 +65,22 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
         createPaddle()
         createBricks()
         addGameViewBoundary()
+    }
+    
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        if frozenBalls != nil {
+            startView.hidden = true
+            restoreBalls()
+        }
+    }
+    
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
+        if !balls.isEmpty {
+            freezeBalls()
+            removeAllBalls()
+        }
     }
     
     // MARK: - Settings were updated
@@ -300,8 +316,34 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
     
     private let ballSize = CGSize(width: 20, height: 20)
     private var balls = [Ball]()
+    private var firstHitFromPaddle = true
+    
+    // used to restore game when user taps the settings screen and comes back
+    private var frozenBalls: [Ball]?
+    
+    private func restoreBalls() {
+        if let frozenBalls = frozenBalls {
+            balls = frozenBalls
+            for ball in frozenBalls {
+                breakoutBehavior.addBall(ball)
+                breakoutBehavior.pushRestoredBall(ball)
+            }
+            self.frozenBalls = nil
+        }
+    }
+    
+    private func freezeBalls() {
+        if !balls.isEmpty {
+            frozenBalls = [Ball]()
+            for ball in balls {
+                ball.linearVelocity = breakoutBehavior.ballBehavior.linearVelocityForItem(ball)
+                frozenBalls?.append(ball)
+            }
+        }
+    }
     
     private func createBall() {
+        firstHitFromPaddle = true
         if balls.count == 0 {
             
             let numberOfBouncingBalls = UserSettings.sharedInstance.numberOfBalls
@@ -342,9 +384,22 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
         balls.removeObject(ball)
     }
     
-    @IBAction func pushBall(gesture: UITapGestureRecognizer) {
+    private func removeAllBalls() {
         for ball in balls {
-            breakoutBehavior.pushBall(ball)
+            removeBall(ball)
+        }
+    }
+    
+    @IBAction func pushBall(gesture: UITapGestureRecognizer) {
+        if firstHitFromPaddle {
+            for ball in balls {
+                breakoutBehavior.pushBallFromPaddle(ball)
+            }
+            firstHitFromPaddle = false
+        } else {
+            for ball in balls {
+                breakoutBehavior.pushBall(ball)
+            }
         }
     }
 }

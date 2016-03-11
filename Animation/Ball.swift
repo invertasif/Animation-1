@@ -9,7 +9,9 @@
 import UIKit
 
 class Ball: UIImageView {
-
+    // used for restoring game state
+    var linearVelocity: CGPoint?
+    
     // iOS 9 specific
     override var collisionBoundsType: UIDynamicItemCollisionBoundsType {
         return .Ellipse

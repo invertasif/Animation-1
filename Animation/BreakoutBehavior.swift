@@ -48,51 +48,60 @@ class BreakoutBehavior: UIDynamicBehavior {
         collidor.removeBoundaryWithIdentifier(name)
     }
     
+    private struct Device {
+        struct iPhone5s {
+            static let Width: CGFloat = 320.0
+            static let Height: CGFloat = 568.0
+        }
+        struct iPhone6 {
+            static let Width: CGFloat = 375.0
+            static let Height: CGFloat = 667.0
+        }
+        struct iPhone6Plus {
+            static let Width: CGFloat = 414.0
+            static let Height: CGFloat = 736.0
+        }
+        struct iPad2 {
+            static let Width: CGFloat = 768.0
+            static let Height: CGFloat = 1024.0
+        }
+        struct iPadAir {
+            static let Width: CGFloat = 1536.0
+            static let Height: CGFloat = 2048.0
+        }
+        struct iPadPro {
+            static let Width: CGFloat = 2048.0
+            static let Height: CGFloat = 2732.0
+        }
+    }
+    
     // MARK: - Ball
     
     func pushBall(ball: Ball) {
         let pushBehavior = UIPushBehavior(items: [ball], mode: UIPushBehaviorMode.Instantaneous)
         let linearVelocity = ballBehavior.linearVelocityForItem(ball)
         
-        // If the device screen resolution height is too large, 
-        // the default magnitude 0.1 will not cause the ball to 
-        // have enough velocity to reach the bricks or even if
-        // it does, will result in poor gameplay
-        // iPhone   5, 5s   320 × 568
-        //          6       375 × 667
-        //          6+      414 × 736
-        // iPad     2       1024 x 768
-        //          Air     2048 x 1536
-        //          Pro     2732 x 2048
-        
         let referenceViewHeight = dynamicAnimator?.referenceView?.bounds.size.height
-        if referenceViewHeight > 568 {
+        if referenceViewHeight > Device.iPhone5s.Height {
             pushBehavior.magnitude = 0.2
-        } else if referenceViewHeight > 736 {
+        } else if referenceViewHeight > Device.iPhone6Plus.Height {
             pushBehavior.magnitude = 0.3
-        } else if referenceViewHeight > 768 {
+        } else if referenceViewHeight > Device.iPad2.Height {
             pushBehavior.magnitude = 0.35
-        } else if referenceViewHeight > 1536 {
+        } else if referenceViewHeight > Device.iPadAir.Height {
             pushBehavior.magnitude = 0.4
         } else {
             pushBehavior.magnitude = 0.15
         }
         
-        // linearVelocity zero means ball at resting state on paddle
-        if linearVelocity == CGPointZero {
-            let lower =  CGFloat(((90-15) * M_PI)/180)
-            let upper = CGFloat(((90+15) * M_PI)/180)
-            pushBehavior.angle = CGFloat.randomRadian(lower, upper)
-        } else {
-            // derive the opposite angle from current velocity
-            let currentAngle = Double(atan2(linearVelocity.y, linearVelocity.x));
-            let oppositeAngle = CGFloat((currentAngle + M_PI) % (2 * M_PI))
-            
-            // add 30 degrees variation for random
-            let lower = oppositeAngle - CGFloat.degreeToRadian(30)
-            let upper = oppositeAngle + CGFloat.degreeToRadian(30)
-            pushBehavior.angle = CGFloat.randomRadian(lower, upper)
-        }
+        // derive the opposite angle from current velocity
+        let currentAngle = Double(atan2(linearVelocity.y, linearVelocity.x))
+        let oppositeAngle = CGFloat((currentAngle + M_PI) % (2 * M_PI))
+        
+        // add 30 degrees variation for random
+        let lower = oppositeAngle - CGFloat.degreeToRadian(30)
+        let upper = oppositeAngle + CGFloat.degreeToRadian(30)
+        pushBehavior.angle = CGFloat.randomRadian(lower, upper)
         
         // when push behavior is done acting on its item [ball], remove it from its animator
         // since we don't need it anymore; however since the action captures a pointer back 
@@ -102,6 +111,48 @@ class BreakoutBehavior: UIDynamicBehavior {
             pushBehavior.dynamicAnimator?.removeBehavior(pushBehavior)
         }
         addChildBehavior(pushBehavior)        
+    }
+    
+    func pushRestoredBall(ball: Ball) {
+        let pushBehavior = UIPushBehavior(items: [ball], mode: UIPushBehaviorMode.Instantaneous)
+        pushBehavior.magnitude = 0.1
+        
+        if let linearVelocity = ball.linearVelocity {
+            pushBehavior.angle = CGFloat(atan2(linearVelocity.y, linearVelocity.x))
+            
+            pushBehavior.action = { [unowned pushBehavior] in
+                pushBehavior.removeItem(ball)
+                pushBehavior.dynamicAnimator?.removeBehavior(pushBehavior)
+            }
+            addChildBehavior(pushBehavior)
+        }
+    }
+    
+    func pushBallFromPaddle(ball: Ball) {
+        let pushBehavior = UIPushBehavior(items: [ball], mode: UIPushBehaviorMode.Instantaneous)
+        
+        let referenceViewHeight = dynamicAnimator?.referenceView?.bounds.size.height
+        if referenceViewHeight > Device.iPhone5s.Height {
+            pushBehavior.magnitude = 0.2
+        } else if referenceViewHeight > Device.iPhone6Plus.Height {
+            pushBehavior.magnitude = 0.3
+        } else if referenceViewHeight > Device.iPad2.Height {
+            pushBehavior.magnitude = 0.35
+        } else if referenceViewHeight > Device.iPadAir.Height {
+            pushBehavior.magnitude = 0.4
+        } else {
+            pushBehavior.magnitude = 0.15
+        }
+        
+        let lower =  CGFloat(((90-15) * M_PI)/180)
+        let upper = CGFloat(((90+15) * M_PI)/180)
+        pushBehavior.angle = CGFloat.randomRadian(lower, upper)
+        
+        pushBehavior.action = { [unowned pushBehavior] in
+            pushBehavior.removeItem(ball)
+            pushBehavior.dynamicAnimator?.removeBehavior(pushBehavior)
+        }
+        addChildBehavior(pushBehavior)
     }
     
     func addBall(ball: UIView) {
