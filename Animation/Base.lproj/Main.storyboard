@@ -57,67 +57,22 @@
                                     <outletCollection property="gestureRecognizers" destination="gcN-ck-xVw" appends="YES" id="0tm-QJ-1K2"/>
                                 </connections>
                             </view>
-                            <view alpha="0.90000000000000002" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="d46-ME-6Oa">
+                            <view alpha="0.94999999999999996" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="d46-ME-6Oa">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="551"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="start-game" translatesAutoresizingMaskIntoConstraints="NO" id="Vaf-8H-bUG">
                                         <rect key="frame" x="0.0" y="0.0" width="600" height="551"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     </imageView>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Start Game" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="siK-Sm-bpK">
-                                        <rect key="frame" x="234" y="260" width="132" height="33"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="33" id="6vK-V7-mFH"/>
-                                        </constraints>
-                                        <fontDescription key="fontDescription" style="UICTFontTextStyleTitle1"/>
-                                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                        <nil key="highlightedColor"/>
-                                        <variation key="default">
-                                            <mask key="constraints">
-                                                <exclude reference="6vK-V7-mFH"/>
-                                            </mask>
-                                        </variation>
-                                    </label>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Breakout" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uQo-24-d7v">
-                                        <rect key="frame" x="275" y="226" width="69" height="20"/>
-                                        <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
-                                        <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="breakout" translatesAutoresizingMaskIntoConstraints="NO" id="fiR-qI-2F5">
-                                        <rect key="frame" x="234" y="219" width="33" height="33"/>
-                                    </imageView>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Tap to Start" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="enG-iU-jmd">
-                                        <rect key="frame" x="256" y="300" width="89" height="20"/>
-                                        <fontDescription key="fontDescription" style="UICTFontTextStyleHeadline"/>
-                                        <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
                                 </subviews>
                                 <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                 <gestureRecognizers/>
                                 <constraints>
-                                    <constraint firstItem="uQo-24-d7v" firstAttribute="leading" secondItem="fiR-qI-2F5" secondAttribute="trailing" constant="8" symbolic="YES" id="3oM-w4-dd1"/>
-                                    <constraint firstItem="siK-Sm-bpK" firstAttribute="centerY" secondItem="d46-ME-6Oa" secondAttribute="centerY" id="9rI-iO-dCo"/>
-                                    <constraint firstItem="enG-iU-jmd" firstAttribute="centerX" secondItem="siK-Sm-bpK" secondAttribute="centerX" id="Glz-d3-7jq"/>
-                                    <constraint firstItem="siK-Sm-bpK" firstAttribute="centerX" secondItem="d46-ME-6Oa" secondAttribute="centerX" id="NmJ-RA-reP"/>
-                                    <constraint firstItem="siK-Sm-bpK" firstAttribute="top" secondItem="fiR-qI-2F5" secondAttribute="bottom" constant="8" symbolic="YES" id="Zt6-sI-SKV"/>
-                                    <constraint firstItem="fiR-qI-2F5" firstAttribute="leading" secondItem="siK-Sm-bpK" secondAttribute="leading" id="bPV-G8-pwN"/>
                                     <constraint firstAttribute="trailing" secondItem="Vaf-8H-bUG" secondAttribute="trailing" id="bZs-S8-ScY"/>
                                     <constraint firstItem="Vaf-8H-bUG" firstAttribute="top" secondItem="d46-ME-6Oa" secondAttribute="top" id="cI5-f0-6m0"/>
-                                    <constraint firstItem="uQo-24-d7v" firstAttribute="centerY" secondItem="fiR-qI-2F5" secondAttribute="centerY" id="d9R-Ef-K8B"/>
-                                    <constraint firstItem="Vaf-8H-bUG" firstAttribute="centerX" secondItem="enG-iU-jmd" secondAttribute="centerX" id="fAN-od-PaK"/>
-                                    <constraint firstItem="enG-iU-jmd" firstAttribute="top" secondItem="siK-Sm-bpK" secondAttribute="bottom" constant="8" id="qHI-JG-erP"/>
                                     <constraint firstAttribute="bottom" secondItem="Vaf-8H-bUG" secondAttribute="bottom" id="uDz-HV-2QK"/>
                                     <constraint firstItem="Vaf-8H-bUG" firstAttribute="leading" secondItem="d46-ME-6Oa" secondAttribute="leading" id="vWL-kY-Akz"/>
-                                    <constraint firstItem="Vaf-8H-bUG" firstAttribute="centerX" secondItem="siK-Sm-bpK" secondAttribute="centerX" id="vaD-1l-2ZZ"/>
                                 </constraints>
-                                <variation key="default">
-                                    <mask key="constraints">
-                                        <exclude reference="fAN-od-PaK"/>
-                                        <exclude reference="vaD-1l-2ZZ"/>
-                                    </mask>
-                                </variation>
                                 <connections>
                                     <outletCollection property="gestureRecognizers" destination="tvi-Lb-A6b" appends="YES" id="HHh-fs-0PJ"/>
                                 </connections>
@@ -140,7 +95,6 @@
                         <outlet property="gameView" destination="gns-0q-bmU" id="C1t-B0-VC1"/>
                         <outlet property="movePaddleGesture" destination="gcN-ck-xVw" id="SE0-cK-TPp"/>
                         <outlet property="pushBallGesture" destination="imO-7i-WrG" id="OBf-bR-Fdx"/>
-                        <outlet property="startGameLabel" destination="siK-Sm-bpK" id="yo2-N2-cyA"/>
                         <outlet property="startImageView" destination="Vaf-8H-bUG" id="Tyi-Yo-pg7"/>
                         <outlet property="startView" destination="d46-ME-6Oa" id="lX1-HG-45J"/>
                     </connections>
@@ -615,6 +569,6 @@
         <image name="breakout" width="33" height="33"/>
         <image name="game-view-background" width="303" height="400"/>
         <image name="settings" width="25" height="25"/>
-        <image name="start-game" width="123" height="142"/>
+        <image name="start-game" width="125" height="222"/>
     </resources>
 </document>

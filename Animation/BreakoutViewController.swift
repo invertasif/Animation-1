@@ -43,11 +43,6 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
         static let BrickBoundary = "Brick Boundary"
     }
     
-    struct Constants {
-        static let GameOverText = "Game Over"
-        static let GameWinText = "You Won!"
-    }
-    
     // MARK: - View controller lifecycle
     
     override func viewDidLoad() {
@@ -131,7 +126,6 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
     
     // MARK: - Start / Restart game
     @IBOutlet weak var startView: UIView!
-    @IBOutlet weak var startGameLabel: UILabel!
     @IBOutlet weak var startImageView: UIImageView!
     
     @IBAction func startGame(sender: UITapGestureRecognizer) {
@@ -153,13 +147,6 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
         pushBallGesture.enabled = false
         
         startView.hidden = false
-        
-        switch status {
-        case .GameOver:
-            startGameLabel.text = Constants.GameOverText
-        case .YouWon:
-            startGameLabel.text = Constants.GameWinText
-        }
         startImageView.image = status.image
         
         removePaddle()
@@ -222,19 +209,6 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
                             )
                         }
                     )
-                    
-                    // run any special function the brick is identified with
-//                    switch brickType {
-//                    case .SmallerPaddle:
-//                        paddle?.decreaseWidth()
-//                        syncPaddle()
-//                    case .LargerPaddle:
-//                        paddle?.increaseWidth()
-//                        syncPaddle()
-//                    case .AddBall:
-//                        createBall()
-//                    default:break
-//                    }
                     
                     if brickType != .Regular { dropSpecialBrickPowerAt(brick.center, brickType: brickType) }
                 }
