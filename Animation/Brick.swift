@@ -44,7 +44,8 @@ enum BrickType: Int {
 }
 
 class Brick: UIView {
-    let padding: CGFloat = 4.0
+    let padding: CGFloat = 3.0
+    var currentAlphaLevel: CGFloat = 1.0
     
     var currentHits = 0 {
         didSet {
@@ -58,10 +59,7 @@ class Brick: UIView {
     init(frame: CGRect, type: BrickType) {
         super.init(frame: frame)
         self.type = type
-        
-        backgroundColor = type.color.colorWithAlphaComponent(0.6)
-        layer.borderColor = UIColor.whiteColor().CGColor
-        layer.borderWidth = padding - 2
+        opaque = false
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -69,8 +67,8 @@ class Brick: UIView {
     }
     
     private func colorAlphaDown() {
-        let alpha = CGFloat(1 - Double(currentHits + 1) * 0.25)
-        backgroundColor = type?.color.colorWithAlphaComponent(alpha)
+        currentAlphaLevel = CGFloat(1 - Double(currentHits + 1) * 0.10)
+        alpha = currentAlphaLevel
     }
     
     override func drawRect(rect: CGRect) {

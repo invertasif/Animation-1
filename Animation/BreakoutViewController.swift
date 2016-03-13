@@ -61,7 +61,6 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
                 for specialPower in self.specialBrickPowersCurrentlyDropping {
                     if let presentationLayerFrame = specialPower.layer.presentationLayer()?.frame, paddle = self.paddle {
                         if CGRectIntersectsRect(paddle.frame, presentationLayerFrame) {
-                            NSLog("special power activate")
                             
                             if let brickType = specialPower.brickType {
                                 switch brickType {
@@ -195,20 +194,19 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
                             brick.alpha = 0
                         },
                         completion: { didComplete in
-                            brick.alpha = 1
+                            brick.alpha = brick.currentAlphaLevel
                             UIView.animateWithDuration(0.2,
                                 animations: {
                                     brick.alpha = 0
                                 },
                                 completion: { didComplete in
-                                    brick.alpha = 1
+                                    brick.alpha = brick.currentAlphaLevel
                                     UIView.animateWithDuration(0.8,
                                         animations: {
                                             brick.alpha = 0
                                         },
                                         completion: { didComplete in
                                             brick.removeFromSuperview()
-//                                            self.bricks.removeValueForKey(identifier)
                                         }
                                     )
                                 }
