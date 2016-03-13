@@ -18,6 +18,7 @@ class Paddle: UIImageView {
     private let maxWidth: CGFloat = 110
     
     private let height: CGFloat = 18.0
+    private let distanceFromBottom: CGFloat = 100.0
     
     private var referenceView: UIView!
     
@@ -33,7 +34,7 @@ class Paddle: UIImageView {
         
         frame = CGRect(origin: CGPointZero, size: CGSize(width: currentWidth, height: height))
         frame.origin.x = referenceView.bounds.size.width/2 - currentWidth/2
-        frame.origin.y = referenceView.bounds.size.height - height
+        frame.origin.y = referenceView.bounds.size.height - height - distanceFromBottom
     }
 
     required init?(coder aDecoder: NSCoder) {

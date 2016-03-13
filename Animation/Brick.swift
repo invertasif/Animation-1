@@ -44,7 +44,7 @@ enum BrickType: Int {
 }
 
 class Brick: UIView {
-    let padding: CGFloat = 3.0
+    let padding: CGFloat = 2.0
     var currentAlphaLevel: CGFloat = 1.0
     
     var currentHits = 0 {

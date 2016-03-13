@@ -332,7 +332,7 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
         if paddle == nil {
             paddle = Paddle(referenceView: gameView)
             gameView.addSubview(paddle!)
-            syncPaddle()
+            syncPaddleBoundary()
         }
     }
     
@@ -352,16 +352,14 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
                 
                 // Specs page 5: 23. Be careful not to move your paddle boundary right on
                 // top of a bouncing ball or the ball might get trapped inside your paddle.
+                var ballDidIntersect = false
                 for ball in balls {
                     if CGRectIntersectsRect(paddle.frame, ball.frame) {
-                        breakoutBehavior.ballBehavior.action = { [unowned self] in
-                            if !CGRectIntersectsRect(paddle.frame, ball.frame) {
-                                self.syncPaddle()
-                            }
-                        }
-                    } else {
-                        syncPaddle()
+                        ballDidIntersect = true
                     }
+                }
+                if !ballDidIntersect {
+                    syncPaddleBoundary()
                 }
             }
             
@@ -370,7 +368,7 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
         }
     }
     
-    private func syncPaddle() {
+    private func syncPaddleBoundary() {
         if let paddleView = paddle {
             // Why ovalInRect?
             // Specs, page 5: 26. You might want to make the bezier path boundary
@@ -473,7 +471,7 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
                 breakoutBehavior.pushBallFromPaddle(ball)
             }
             firstHitRequiredFromPaddle = false
-            syncPaddle()
+            syncPaddleBoundary()
         } else {
             for ball in balls {
                 breakoutBehavior.pushBall(ball)
