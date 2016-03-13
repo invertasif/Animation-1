@@ -25,7 +25,11 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
     private lazy var animator: UIDynamicAnimator = {
         let lazilyCreatedDynamicAnimator = UIDynamicAnimator(referenceView: self.gameView)
         lazilyCreatedDynamicAnimator.delegate = self
-//        lazilyCreatedDynamicAnimator.debugEnabled = true
+        
+        #if DEBUG
+            lazilyCreatedDynamicAnimator.debugEnabled = true
+        #endif
+        
         return lazilyCreatedDynamicAnimator
     }()
     
@@ -184,6 +188,8 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
                 if brick.currentHits >= brickType.hitsRequired {
                     
                     breakoutBehavior.removeBoundary(named: identifier)
+                    self.bricks.removeValueForKey(identifier)
+                    
                     UIView.animateWithDuration(0.2,
                         animations: {
                             brick.alpha = 0
@@ -202,7 +208,7 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
                                         },
                                         completion: { didComplete in
                                             brick.removeFromSuperview()
-                                            self.bricks.removeValueForKey(identifier)
+//                                            self.bricks.removeValueForKey(identifier)
                                         }
                                     )
                                 }
