@@ -10,13 +10,22 @@ import UIKit
 
 enum GameStatus {
     case GameOver, YouWon
+    
+    var image: UIImage? {
+        switch self {
+        case .GameOver:
+            return UIImage(named: "game-over")
+        case .YouWon:
+            return UIImage(named: "you-won")
+        }
+    }
 }
 
 class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICollisionBehaviorDelegate {
     private lazy var animator: UIDynamicAnimator = {
         let lazilyCreatedDynamicAnimator = UIDynamicAnimator(referenceView: self.gameView)
         lazilyCreatedDynamicAnimator.delegate = self
-        lazilyCreatedDynamicAnimator.debugEnabled = true
+//        lazilyCreatedDynamicAnimator.debugEnabled = true
         return lazilyCreatedDynamicAnimator
     }()
     
@@ -39,10 +48,7 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
         static let GameWinText = "You Won!"
     }
     
-    // used for identifying colliding bricks and removing from superview
-    var bricks = [String:Brick]()
-    
-    // MARK: View controller lifecycle
+    // MARK: - View controller lifecycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -53,9 +59,33 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
                 for ball in self.balls {
                     if !CGRectIntersectsRect(ball.frame, self.gameView.frame) { self.removeBall(ball) }
                 }
-                if self.balls.count == 0 && self.frozenBalls == nil { self.gameOver(GameStatus.GameOver) }
+                for specialPower in self.specialBrickPowersCurrentlyDropping {
+                    if let presentationLayerFrame = specialPower.layer.presentationLayer()?.frame, paddle = self.paddle {
+                        if CGRectIntersectsRect(paddle.frame, presentationLayerFrame) {
+                            NSLog("special power activate")
+                            
+                            if let brickType = specialPower.brickType {
+                                switch brickType {
+                                case .LargerPaddle:
+                                    paddle.increaseWidth()
+                                case .SmallerPaddle:
+                                    paddle.decreaseWidth()
+                                case .AddBall:
+                                    self.createBall()
+                                default: break
+                                }
+                            }
+                            specialPower.removeFromSuperview()                            
+                        }
+                    }
+                }
+                if self.balls.count == 0 && self.frozenBalls == nil {
+                    self.removeAllSpecialBrickPowersDropping()
+                    self.gameOver(GameStatus.GameOver)                    
+                }
                 if self.balls.count > 0 && self.bricks.count == 0 {
                     self.removeAllBalls()
+                    self.removeAllSpecialBrickPowersDropping()
                     self.gameOver(GameStatus.YouWon)
                 }
             }
@@ -102,6 +132,7 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
     // MARK: - Start / Restart game
     @IBOutlet weak var startView: UIView!
     @IBOutlet weak var startGameLabel: UILabel!
+    @IBOutlet weak var startImageView: UIImageView!
     
     @IBAction func startGame(sender: UITapGestureRecognizer) {
         startView.hidden = true
@@ -116,9 +147,7 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
         createBall()
     }
     
-    private func gameOver(status: GameStatus) {
-        NSLog("game over")
-        
+    private func gameOver(status: GameStatus) {        
         gameView.userInteractionEnabled = false
         movePaddleGesture.enabled = false
         pushBallGesture.enabled = false
@@ -131,6 +160,7 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
         case .YouWon:
             startGameLabel.text = Constants.GameWinText
         }
+        startImageView.image = status.image
         
         removePaddle()
         removeAllBricks()
@@ -157,13 +187,7 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
         breakoutBehavior.addBoundary(gameViewPathRight, named: BoundaryNames.GameViewRightBoundary)
     }
     
-    // MARK: - Bricks
-    
-    private let brickHeight = 30
-    private let bricksPerRow = 6
-    private let brickBackgroundColor = UIColor.blueColor()
-//    private let brickRows = 4
-    private let topBrickDistanceFromTop = 100
+    // MARK: - Collision behavior delegate
     
     func collisionBehavior(behavior: UICollisionBehavior, beganContactForItem item: UIDynamicItem, withBoundaryIdentifier identifier: NSCopying?, atPoint p: CGPoint) {
         
@@ -173,7 +197,6 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
                 if brick.currentHits >= brickType.hitsRequired {
                     
                     breakoutBehavior.removeBoundary(named: identifier)
-                    
                     UIView.animateWithDuration(0.2,
                         animations: {
                             brick.alpha = 0
@@ -201,21 +224,60 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
                     )
                     
                     // run any special function the brick is identified with
-                    switch brickType {
-                    case .SmallerPaddle:
-                        paddle?.decreaseWidth()
-                        syncPaddle()
-                    case .LargerPaddle:
-                        paddle?.increaseWidth()
-                        syncPaddle()
-                    case .AddBall:
-                        createBall()
-                    default:break
-                    }
+//                    switch brickType {
+//                    case .SmallerPaddle:
+//                        paddle?.decreaseWidth()
+//                        syncPaddle()
+//                    case .LargerPaddle:
+//                        paddle?.increaseWidth()
+//                        syncPaddle()
+//                    case .AddBall:
+//                        createBall()
+//                    default:break
+//                    }
+                    
+                    if brickType != .Regular { dropSpecialBrickPowerAt(brick.center, brickType: brickType) }
                 }
             }
         }
     }
+    
+    // MARK: - Special bricks
+    
+    private var specialBrickPowersCurrentlyDropping = [BrickSpecialPower]()
+    
+    private func dropSpecialBrickPowerAt(dropPosition: CGPoint, brickType: BrickType) {
+        let specialBrickPower = BrickSpecialPower(dropPosition: dropPosition, brickType: brickType)
+        specialBrickPowersCurrentlyDropping.append(specialBrickPower)
+        gameView.addSubview(specialBrickPower)
+        
+        UIView.animateWithDuration(10.0,
+            animations: {
+                specialBrickPower.center.y = self.gameView.frame.size.height
+            },
+            completion: { [unowned self, specialBrickPower] didComplete in
+                specialBrickPower.removeFromSuperview()
+                self.specialBrickPowersCurrentlyDropping.removeObject(specialBrickPower)
+            }
+        )
+    }
+    
+    private func removeAllSpecialBrickPowersDropping() {
+        for droppingPower in specialBrickPowersCurrentlyDropping {
+            droppingPower.removeFromSuperview()
+        }
+        specialBrickPowersCurrentlyDropping = [BrickSpecialPower]()
+    }
+    
+    // MARK: - Bricks
+    
+    // used to identify colliding bricks and remove them from superview
+    private var bricks = [String:Brick]()
+
+
+    private let brickHeight = 30
+    private let bricksPerRow = 6
+    private let topBrickDistanceFromTop = 100
     
     private func removeAllBricks() {
         for (identifier, brick) in bricks {
@@ -459,4 +521,5 @@ private extension Array {
             }
         }
         return false
-    }}
+    }
+}

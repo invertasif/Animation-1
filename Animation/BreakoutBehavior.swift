@@ -157,19 +157,20 @@ class BreakoutBehavior: UIDynamicBehavior {
         addChildBehavior(pushBehavior)
     }
     
-    func addBall(ball: UIView) {
+    func addBall(ball: Ball) {
         dynamicAnimator?.referenceView?.addSubview(ball)
         gravity.addItem(ball)
         collidor.addItem(ball)
         ballBehavior.addItem(ball)
     }
     
-    func removeBall(ball: UIView) {
+    func removeBall(ball: Ball) {
         gravity.removeItem(ball)
         collidor.removeItem(ball)
         ballBehavior.removeItem(ball)
         ball.removeFromSuperview()        
     }
+    
 }
 
 private extension CGFloat {

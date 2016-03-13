@@ -16,6 +16,7 @@
 		20CDBF5D1C609510003DC102 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 20CDBF5B1C609510003DC102 /* Main.storyboard */; };
 		20CDBF621C609510003DC102 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 20CDBF601C609510003DC102 /* LaunchScreen.storyboard */; };
 		20CDBF6A1C60952A003DC102 /* BreakoutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20CDBF691C60952A003DC102 /* BreakoutViewController.swift */; };
+		20EFD3DF1C94FFB600ED9EAF /* BrickSpecialPower.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20EFD3DE1C94FFB600ED9EAF /* BrickSpecialPower.swift */; };
 		20F2914B1C7417CF009882E9 /* BreakoutBehavior.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F2914A1C7417CF009882E9 /* BreakoutBehavior.swift */; };
 		20F2914D1C742404009882E9 /* Ball.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20F2914C1C742404009882E9 /* Ball.swift */; };
 /* End PBXBuildFile section */
@@ -33,6 +34,7 @@
 		20CDBF611C609510003DC102 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		20CDBF631C609510003DC102 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		20CDBF691C60952A003DC102 /* BreakoutViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BreakoutViewController.swift; sourceTree = "<group>"; };
+		20EFD3DE1C94FFB600ED9EAF /* BrickSpecialPower.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BrickSpecialPower.swift; sourceTree = "<group>"; };
 		20F2914A1C7417CF009882E9 /* BreakoutBehavior.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BreakoutBehavior.swift; sourceTree = "<group>"; };
 		20F2914C1C742404009882E9 /* Ball.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Ball.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -72,6 +74,7 @@
 				20F2914A1C7417CF009882E9 /* BreakoutBehavior.swift */,
 				20F2914C1C742404009882E9 /* Ball.swift */,
 				20C6A7711C8FCB12001C70BC /* Brick.swift */,
+				20EFD3DE1C94FFB600ED9EAF /* BrickSpecialPower.swift */,
 				2087EA0A1C87796400581C6D /* Paddle.swift */,
 				2099FBE91C923A5900A06791 /* SettingsTableViewController.swift */,
 				20B630051C924123001F34C6 /* UserSettings.swift */,
@@ -157,6 +160,7 @@
 			files = (
 				20F2914B1C7417CF009882E9 /* BreakoutBehavior.swift in Sources */,
 				20CDBF581C609510003DC102 /* AppDelegate.swift in Sources */,
+				20EFD3DF1C94FFB600ED9EAF /* BrickSpecialPower.swift in Sources */,
 				2087EA0B1C87796400581C6D /* Paddle.swift in Sources */,
 				20CDBF6A1C60952A003DC102 /* BreakoutViewController.swift in Sources */,
 				20F2914D1C742404009882E9 /* Ball.swift in Sources */,
