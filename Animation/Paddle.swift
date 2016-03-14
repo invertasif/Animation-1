@@ -14,8 +14,8 @@ class Paddle: UIImageView {
     private let defaultWidth: CGFloat = 80
     private var currentWidth: CGFloat = 80
     private let widthStepper: CGFloat = 10
-    private let minWidth: CGFloat = 50
-    private let maxWidth: CGFloat = 110
+    private let minWidth: CGFloat = 40
+    private let maxWidth: CGFloat = 120
     
     private let height: CGFloat = 18.0
     private let distanceFromBottom: CGFloat = 100.0

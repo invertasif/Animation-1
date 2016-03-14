@@ -8,25 +8,37 @@
 
 import UIKit
 
+// Hints
+// 8. You might find it good for the clarity of your code to create 
+// a BreakoutBehavior subclass of UIDynamicBehavior which uses 
+// addChildBehavior to add the collision behavior, dynamic item 
+// behavior, et. al., to itself.
+
 class BreakoutBehavior: UIDynamicBehavior {
+
+    // Hints
+    // 9. Your BreakoutBehavior could manage lots of behavior-oriented 
+    // stuff like the push, the brick and paddle boundaries, and the 
+    // behavior of the bouncing ball(s).
+    
     lazy var collidor: UICollisionBehavior = {
         let lazilyCreatedCollisionBehavior = UICollisionBehavior()
-//        lazilyCreatedCollisionBehavior.translatesReferenceBoundsIntoBoundary = true
         return lazilyCreatedCollisionBehavior
     }()
     
     lazy var gravity: UIGravityBehavior = {
         let lazilyCreatedGravityBehavior = UIGravityBehavior()
+        
         lazilyCreatedGravityBehavior.magnitude = UserSettings.sharedInstance.gravity
-        lazilyCreatedGravityBehavior.gravityDirection = CGVector(dx: 0.0, dy: 1.0)
+        lazilyCreatedGravityBehavior.gravityDirection = CGVector(dx: 0.0, dy: UserSettings.sharedInstance.gravity * 0.5)
         return lazilyCreatedGravityBehavior
     }()
     
     lazy var ballBehavior: UIDynamicItemBehavior = {
         let lazilyCreatedBallBehavior = UIDynamicItemBehavior()
-        lazilyCreatedBallBehavior.elasticity = 1.0
-        lazilyCreatedBallBehavior.resistance = 0
-        lazilyCreatedBallBehavior.friction = 0.5
+        lazilyCreatedBallBehavior.elasticity = UserSettings.sharedInstance.elasticity
+        lazilyCreatedBallBehavior.resistance = 0.0
+        lazilyCreatedBallBehavior.friction = 0.1
         lazilyCreatedBallBehavior.allowsRotation = true
         return lazilyCreatedBallBehavior
     }()
@@ -35,8 +47,7 @@ class BreakoutBehavior: UIDynamicBehavior {
         super.init()
         addChildBehavior(gravity)
         addChildBehavior(collidor)
-        addChildBehavior(ballBehavior)
-        
+        addChildBehavior(ballBehavior)        
     }
     
     // MARK: - Boundaries
@@ -78,6 +89,11 @@ class BreakoutBehavior: UIDynamicBehavior {
     }
     
     // MARK: - Ball
+    
+    // Hints
+    // 15. The push that your tap gesture must generate is just an instantaneous 
+    // UIPushBehavior, nothing more. You’ll have to set it up with an appropriate 
+    // magnitude for the size of your bouncing ball.
     
     func pushBall(ball: Ball) {
         let pushBehavior = UIPushBehavior(items: [ball], mode: UIPushBehaviorMode.Instantaneous)

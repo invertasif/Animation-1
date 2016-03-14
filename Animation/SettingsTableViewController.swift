@@ -8,8 +8,21 @@
 
 import UIKit
 
+// Required Tasks
+// 6. Use a tab bar controller to add a second tab to your UI which 
+// contains a static table view with controls that let the user set 
+// these 4+ different variables to meaningful game-play values. 
+// Your game should start using them immediately (i.e. as soon as 
+// you click back on the main game play tab).
+
 class SettingsTableViewController: UITableViewController {
 
+    // Required Tasks
+    // 7. This game-play settings MVC must use at least one of each 
+    // of the following 3 iOS classes: UISwitch, UISegmentedControl 
+    // and UIStepper (you may substitute UISlider for the UIStepper 
+    // if that’s more appropriate to your setting).
+    
     // Gravity
     @IBOutlet weak var gravitySlider: UISlider! {
         didSet {

@@ -8,6 +8,12 @@
 
 import Foundation
 
+// Required Tasks
+// 5. Your game should be designed to support at least 4 different variables
+// that control the way your game is played (e.g. number of bricks, ball
+// bounciness, number of bouncing balls, a gravitational pull, special bricks
+// that cause interesting behavior, etc.).
+
 class UserSettings {
     static let sharedInstance = UserSettings()
     
@@ -15,18 +21,20 @@ class UserSettings {
     // UserSettings is meant to be used as a static class
     private init() {}
     
+    // Required Tasks
+    // 8. Your game-play configurations must persist between application launchings.
     private let userDefaults = NSUserDefaults.standardUserDefaults()
     
     private struct Defaults {
-        static let GravityMagnitude: CGFloat = 0.10
+        static let GravityMagnitude: CGFloat = 0.25
         static let BallBehaviorElasticity: CGFloat = 1.00
         static let NumberOfBalls = 2
         static let NumberOfTotalBricks = 18
         static let NumberOfSpecialBricks = 6
         static let SpecialBrickSmallerPaddleEnabled = true
         static let SpecialBrickLargerPaddleEnabled = true
-        static let SpecialBrickAddBallEnabled = false
-        static let SpecialBrickHardEnabled = false
+        static let SpecialBrickAddBallEnabled = true
+        static let SpecialBrickHardEnabled = true
     }
     
     private struct Keys {

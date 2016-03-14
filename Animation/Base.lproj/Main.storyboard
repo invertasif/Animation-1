@@ -57,7 +57,7 @@
                                     <outletCollection property="gestureRecognizers" destination="gcN-ck-xVw" appends="YES" id="0tm-QJ-1K2"/>
                                 </connections>
                             </view>
-                            <view alpha="0.94999999999999996" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="d46-ME-6Oa">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="d46-ME-6Oa">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="551"/>
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="start-game" translatesAutoresizingMaskIntoConstraints="NO" id="Vaf-8H-bUG">
