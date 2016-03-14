@@ -118,7 +118,14 @@ class BreakoutViewController: UIViewController, UIDynamicAnimatorDelegate, UICol
     
     // MARK: - Settings were updated
     func settingsDidUpdate() {
+        // The value in this property is tied to the value in the 
+        // gravityDirection property, so changes in one affect the other.
         breakoutBehavior.gravity.magnitude = UserSettings.sharedInstance.gravity
+
+        // The default value of this property is the vector (0.0, 1.0), 
+        // which represents a downward force in the reference view.
+        breakoutBehavior.gravity.gravityDirection = CGVector(dx: 0.0, dy: 1.0)
+        
         breakoutBehavior.ballBehavior.elasticity = UserSettings.sharedInstance.elasticity
     }
     
